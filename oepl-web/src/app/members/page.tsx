@@ -4,15 +4,16 @@ import FooterCTA from "@/components/FooterCTA";
 import { Mail, BookOpen, FlaskConical, GraduationCap, Briefcase, Star } from "lucide-react";
 import { useLang } from "@/contexts/LangContext";
 import { useContent } from "@/contexts/ContentContext";
-import type { AlumniMember, ResearcherMember } from "@/types/content";
+import { groupMembersForDisplay, formatGraduationYear } from "@/lib/content/members";
+import type { MemberRecord } from "@/types/content";
 import type { Lang } from "@/i18n/translations";
 
 function ResearcherCard({ r, lang, degreeMap }: {
-  r: ResearcherMember;
+  r: MemberRecord;
   lang: Lang;
   degreeMap: Record<string, string>;
 }) {
-  const field = lang === "KR" ? r.fieldKr : r.fieldEn;
+  const field = r.fieldKr || r.fieldEn;
   return (
     <div className="rounded-2xl bg-white border border-gray-100 p-3 flex gap-4 hover:border-[#E88800]/40 transition-colors">
       <div className="flex-shrink-0 rounded-xl w-[140px] h-[168px] flex items-center justify-center bg-gray-100 border border-gray-200">
@@ -39,11 +40,10 @@ function ResearcherCard({ r, lang, degreeMap }: {
   );
 }
 
-function AlumniCard({ a, lang }: { a: AlumniMember; lang: Lang }) {
+function AlumniCard({ a, lang }: { a: MemberRecord; lang: Lang }) {
   const degreeLabel = lang === "KR"
     ? (a.degree === "박사과정" ? "박사과정" : "석사과정")
     : (a.degree === "박사과정" ? "Ph.D Program" : "M.S Program");
-  const monthPad = String(a.month).padStart(2, "0");
   return (
     <div className="rounded-xl bg-white border border-gray-100 px-5 py-4 flex items-center justify-between gap-4 hover:border-[#E88800]/30 transition-colors">
       <div>
@@ -51,7 +51,7 @@ function AlumniCard({ a, lang }: { a: AlumniMember; lang: Lang }) {
           <span className="font-semibold text-sm text-[#080d1e]">{lang === "KR" ? a.nameKo : a.nameEn}</span>
           <span className="text-xs text-[#9ca3af]">{lang === "KR" ? a.nameEn : a.nameKo}</span>
         </div>
-        <span className="text-xs text-[#6b7280]">{a.year} · {monthPad}</span>
+        <span className="text-xs text-[#6b7280]">{formatGraduationYear(a)}</span>
       </div>
       <span className="flex-shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#E88800]/10 text-[#E88800] border border-[#E88800]/20">
         {degreeLabel}
@@ -76,7 +76,7 @@ export default function MembersPage() {
   const { content } = useContent();
   const m = t.members;
   const professor = content.members.professor;
-  const { postdocs, gradStudents, phdAlumni, msAlumni } = content.members;
+  const { postdocs, gradStudents, phdAlumni, msAlumni } = groupMembersForDisplay(content.members);
   const affiliation = lang === "KR" ? professor.affiliationKr : professor.affiliationEn;
   return (
     <>

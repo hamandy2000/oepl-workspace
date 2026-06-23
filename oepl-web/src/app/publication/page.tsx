@@ -5,6 +5,8 @@ import FooterCTA from "@/components/FooterCTA";
 import { ExternalLink, ChevronRight, ChevronLeft } from "lucide-react";
 import { useLang } from "@/contexts/LangContext";
 import { useContent } from "@/contexts/ContentContext";
+import { publicationDoiLink } from "@/types/content";
+import { publicationSortKey, publicationYear } from "@/lib/content/display";
 
 function FilterBtn({ value, active, onClick }: { value: string; active: boolean; onClick: () => void }) {
   return (
@@ -102,8 +104,11 @@ export default function PublicationPage() {
   const publications = content.publications;
   const years = useMemo(() => {
     if (publications.length === 0) return ["ALL"];
-    const maxYear = Math.max(...publications.map((p) => p.year));
-    return ["ALL", ...Array.from({ length: maxYear - 2000 + 1 }, (_, i) => String(maxYear - i))];
+    const yearValues = publications.map((p) => publicationYear(p)).filter((y): y is number => y !== null);
+    if (yearValues.length === 0) return ["ALL"];
+    const maxYear = Math.max(...yearValues);
+    const minYear = Math.min(...yearValues);
+    return ["ALL", ...Array.from({ length: maxYear - minYear + 1 }, (_, i) => String(maxYear - i))];
   }, [publications]);
   const [yearFilter, setYearFilter] = useState("ALL");
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
@@ -129,10 +134,10 @@ export default function PublicationPage() {
   }
 
   const filtered = publications
-    .filter((p) => yearFilter === "ALL" || String(p.year) === yearFilter)
+    .filter((p) => yearFilter === "ALL" || String(publicationYear(p) ?? "") === yearFilter)
     .sort((a, b) => {
-      const da = a.year * 10000 + a.month * 100 + a.day;
-      const db = b.year * 10000 + b.month * 100 + b.day;
+      const da = publicationSortKey(a);
+      const db = publicationSortKey(b);
       return sortOrder === "newest" ? db - da : da - db;
     });
 
@@ -216,7 +221,10 @@ export default function PublicationPage() {
             <p className="text-xs text-[#9ca3af] mb-6">{t.publication.count(filtered.length)}</p>
 
             <div className="flex flex-col gap-4">
-              {paginated.map((pub) => (
+              {paginated.map((pub) => {
+                const doiHref = publicationDoiLink(pub);
+                const year = publicationYear(pub);
+                return (
                 <div
                   key={pub.id}
                   className="group rounded-2xl bg-white border border-gray-100 p-6 flex flex-col gap-3 hover:border-[#E88800]/40 transition-colors"
@@ -233,13 +241,13 @@ export default function PublicationPage() {
                       >
                         {pub.journal}
                       </span>
-                      <span className="text-[10px] font-medium text-[#9ca3af]">
-                        {pub.year} · {String(pub.month).padStart(2, "0")} · {String(pub.day).padStart(2, "0")}
-                      </span>
+                      {year !== null && (
+                        <span className="text-[10px] font-medium text-[#9ca3af]">{year}</span>
+                      )}
                     </div>
-                    {pub.doi && (
+                    {doiHref && (
                       <a
-                        href={pub.doi}
+                        href={doiHref}
                         target="_blank"
                         rel="noreferrer"
                         className="flex-shrink-0 flex items-center gap-1 text-xs text-[#9ca3af] hover:text-[#E88800] transition-colors"
@@ -252,21 +260,30 @@ export default function PublicationPage() {
 
                   <div className="flex flex-col gap-1">
                     <h3 className="font-semibold text-sm leading-snug text-[#080d1e] group-hover:text-[#E88800] transition-colors">
-                      {lang === "KR" ? (pub.titleKo || pub.title) : pub.title}
+                      {lang === "KR" ? pub.titleKo : pub.titleEn}
                     </h3>
-                    {pub.titleKo && (
+                    {(lang === "KR" ? pub.titleEn : pub.titleKo) && (
                       <p className="text-sm leading-snug text-[#9ca3af]">
-                        {lang === "KR" ? pub.title : pub.titleKo}
+                        {lang === "KR" ? pub.titleEn : pub.titleKo}
                       </p>
                     )}
                   </div>
 
                   <div>
                     <p className="text-xs text-[#6b7280]">{pub.authors}</p>
-                    <p className="text-xs mt-0.5 text-[#E88800] font-medium">{pub.volume}</p>
+                    {pub.doi ? (
+                      <a
+                        href={doiHref}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs mt-0.5 text-[#E88800] font-medium hover:underline inline-block"
+                      >
+                        {pub.doi}
+                      </a>
+                    ) : null}
                   </div>
                 </div>
-              ))}
+              );})}
             </div>
 
             {/* Pagination */}

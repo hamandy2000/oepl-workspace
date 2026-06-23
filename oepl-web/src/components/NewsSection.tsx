@@ -41,7 +41,7 @@ export default function NewsSection() {
               <div className="px-4 py-3 flex flex-col gap-1.5">
                 <div className="flex items-center justify-between">
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#E88800]/15 text-[#E88800] border border-[#E88800]/30">
-                    {item.badge}
+                    {item.type}
                   </span>
                   <span className="text-[10px] text-[#9ca3af]">{item.date}</span>
                 </div>
@@ -49,7 +49,7 @@ export default function NewsSection() {
                   {item.title}
                 </h3>
                 <p className="text-[var(--color-neutral-500)] text-[11px] leading-relaxed line-clamp-2">
-                  {item.excerpt}
+                  {item.detail}
                 </p>
                 <div className="flex items-center gap-1 text-[11px] font-semibold text-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-opacity pt-0.5">
                   {t.news.readMore} <ArrowRight size={11} />

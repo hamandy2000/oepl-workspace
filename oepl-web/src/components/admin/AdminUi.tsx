@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+import { ChevronRight } from "lucide-react";
 import { btnDangerClass, btnGhostClass, btnPrimaryClass } from "./form-styles";
 
 export function AdminPageHeader({
@@ -21,27 +23,124 @@ export function AdminPageHeader({
   );
 }
 
+export function AdminDropdown<T extends string>({
+  value,
+  options,
+  onChange,
+}: {
+  value: T;
+  options: { value: T; label: string }[];
+  onChange: (value: T) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const current = options.find((o) => o.value === value) ?? { value, label: value || "선택" };
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((p) => !p)}
+        className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer"
+        style={{
+          background: "#ffffff",
+          color: "#374151",
+          border: "1px solid #e5e7eb",
+        }}
+      >
+        {current.label}
+        <ChevronRight
+          size={11}
+          className="transition-transform"
+          style={{ transform: open ? "rotate(-90deg)" : "rotate(90deg)" }}
+        />
+      </button>
+
+      {open && (
+        <div
+          className="absolute left-0 z-50 mt-1 rounded-xl overflow-hidden"
+          style={{
+            background: "#ffffff",
+            border: "1px solid #e5e7eb",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+            minWidth: "100%",
+          }}
+        >
+          {options.map((o, i) => (
+            <button
+              key={o.value}
+              type="button"
+              onClick={() => { onChange(o.value); setOpen(false); }}
+              className="w-full text-left px-4 py-2.5 text-xs font-semibold transition-colors hover:bg-gray-50 cursor-pointer whitespace-nowrap"
+              style={{
+                color: o.value === value ? "#E88800" : "#374151",
+                borderTop: i > 0 ? "1px solid #f3f4f6" : "none",
+              }}
+            >
+              {o.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function AdminTable({
   headers,
   children,
+  toolbar,
 }: {
-  headers: string[];
+  headers: React.ReactNode[];
   children: React.ReactNode;
+  toolbar?: React.ReactNode;
 }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const onWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      if (el.scrollWidth <= el.clientWidth) return;
+      e.preventDefault();
+      el.scrollLeft += e.deltaY;
+    };
+
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
+
   return (
     <div className="rounded-2xl bg-white border border-gray-100 overflow-hidden">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="bg-gray-50 border-b border-gray-100">
-            {headers.map((h) => (
-              <th key={h} className="text-left px-4 py-3 text-[10px] font-semibold uppercase tracking-widest text-[#9ca3af]">
-                {h}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>{children}</tbody>
-      </table>
+      {toolbar && (
+        <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-gray-100 bg-gray-50/50">
+          {toolbar}
+        </div>
+      )}
+      <div ref={scrollRef} className="overflow-x-auto admin-table-scroll">
+        <table className="w-full text-sm min-w-max">
+          <thead>
+            <tr className="bg-gray-50 border-b border-gray-100">
+              {headers.map((h, i) => (
+                <th key={i} className="text-left px-4 py-3 text-[10px] font-semibold uppercase tracking-widest text-[#9ca3af]">
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="text-[#080d1e]">{children}</tbody>
+        </table>
+      </div>
     </div>
   );
 }
@@ -89,10 +188,14 @@ export function AdminModal({
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
-      <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
-        <h2 className="text-lg font-bold text-[#080d1e] mb-4">{title}</h2>
-        <div className="flex flex-col gap-4">{children}</div>
-        <div className="flex justify-end gap-2 mt-6">
+      <div className="w-full max-w-lg max-h-[90vh] flex flex-col rounded-2xl bg-white shadow-xl overflow-hidden">
+        <div className="px-6 pt-6 pb-2 flex-shrink-0">
+          <h2 className="text-lg font-bold text-[#080d1e]">{title}</h2>
+        </div>
+        <div className="flex-1 min-h-0 overflow-y-auto admin-modal-scroll px-6 py-2">
+          <div className="flex flex-col gap-4">{children}</div>
+        </div>
+        <div className="flex justify-end gap-2 px-6 py-4 flex-shrink-0 border-t border-gray-100">
           <button type="button" onClick={onClose} className={btnGhostClass}>
             {cancelLabel}
           </button>

@@ -4,12 +4,12 @@ import { useState } from "react";
 import { useLang } from "@/contexts/LangContext";
 import { useContent } from "@/contexts/ContentContext";
 import type { Patent, PatentStatus } from "@/types/content";
-import { createId } from "@/lib/data/ids";
+import { NEW_ID, isNewId } from "@/lib/data/ids";
 import { inputClass } from "@/components/admin/form-styles";
 import { AdminModal, AdminPageHeader, AdminRowActions, AdminTable, Field } from "@/components/admin/AdminUi";
 
 const emptyPatent = (): Patent => ({
-  id: "",
+  id: NEW_ID,
   number: "",
   title: "",
   titleEn: "",
@@ -46,9 +46,9 @@ export default function AdminPatentsPage() {
 
       <AdminModal
         open={!!draft}
-        title={draft?.id ? t.admin.edit : t.admin.add}
+        title={draft && !isNewId(draft.id) ? t.admin.edit : t.admin.add}
         onClose={() => setDraft(null)}
-        onSubmit={() => { if (draft) { upsertPatent({ ...draft, id: draft.id || createId() }); setDraft(null); } }}
+        onSubmit={() => { if (draft) { void upsertPatent({ ...draft, id: draft.id || NEW_ID }); setDraft(null); } }}
         submitLabel={t.admin.save}
         cancelLabel={t.admin.cancel}
       >

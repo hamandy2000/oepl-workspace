@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:check": "node scripts/check-db.mjs",
+    "db:probe": "node scripts/probe-schema.mjs",
+    "db:setup": "node scripts/setup-db.mjs",
+    "db:seed": "tsx scripts/seed-db.ts",
+    "db:reset": "node scripts/setup-db.mjs && tsx scripts/seed-db.ts"
   },
   "dependencies": {
     "@fontsource/pretendard": "^5.2.5",
@@ -24,7 +29,9 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "postgres": "^3.4.9",
     "tailwindcss": "^4",
+    "tsx": "^4.22.4",
     "typescript": "^5"
   }
 }

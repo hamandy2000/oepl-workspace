@@ -169,7 +169,7 @@ export default function NewsPage() {
                       {display.title}
                     </h2>
                     <p className="text-xs text-[#6b7280] leading-relaxed mt-1.5 line-clamp-2">
-                      {display.excerpt}
+                      {display.detail}
                     </p>
                   </div>
 

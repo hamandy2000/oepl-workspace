@@ -2,16 +2,13 @@
 import { ArrowRight } from "lucide-react";
 import { useLang } from "@/contexts/LangContext";
 import { useContent } from "@/contexts/ContentContext";
+import { publicationSortKey, publicationYear } from "@/lib/content/display";
 
 export default function PublicationsSection() {
   const { lang, t } = useLang();
   const { content } = useContent();
   const publications = [...content.publications]
-    .sort((a, b) => {
-      const da = a.year * 10000 + a.month * 100 + a.day;
-      const db = b.year * 10000 + b.month * 100 + b.day;
-      return db - da;
-    })
+    .sort((a, b) => publicationSortKey(b) - publicationSortKey(a))
     .slice(0, 4);
 
   return (
@@ -38,8 +35,9 @@ export default function PublicationsSection() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {publications.map((pub) => {
-            const primaryTitle = lang === "KR" ? pub.titleKo : pub.title;
-            const secondaryTitle = lang === "KR" ? pub.title : pub.titleKo;
+            const primaryTitle = lang === "KR" ? pub.titleKo : pub.titleEn;
+            const secondaryTitle = lang === "KR" ? pub.titleEn : pub.titleKo;
+            const year = publicationYear(pub);
             return (
               <div
                 key={pub.id}
@@ -47,8 +45,12 @@ export default function PublicationsSection() {
               >
                 <div className="flex flex-col flex-1">
                   <div className="flex items-center gap-1.5 mb-3">
-                    <span className="text-[#9ca3af] text-xs">{pub.year}</span>
-                    <span className="text-[#d1d5db]">·</span>
+                    {year !== null && (
+                      <>
+                        <span className="text-[#9ca3af] text-xs">{year}</span>
+                        <span className="text-[#d1d5db]">·</span>
+                      </>
+                    )}
                     <span className="text-xs font-semibold text-[#9ca3af]">{pub.journal}</span>
                   </div>
                   <h3 className="text-[#080d1e] font-semibold text-sm leading-snug mb-1 line-clamp-2 group-hover:text-[#E88800] transition-colors">

@@ -192,6 +192,44 @@ body {
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
+/* Admin table — thin horizontal scrollbar + wheel scroll target */
+.admin-table-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f9fafb;
+}
+.admin-table-scroll::-webkit-scrollbar {
+  height: 3px;
+}
+.admin-table-scroll::-webkit-scrollbar-track {
+  background: #f9fafb;
+}
+.admin-table-scroll::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 9999px;
+}
+.admin-table-scroll::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Admin modal — scrollbar inside white panel */
+.admin-modal-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #E88800 #ffffff;
+}
+.admin-modal-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.admin-modal-scroll::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+.admin-modal-scroll::-webkit-scrollbar-thumb {
+  background: #E88800;
+  border-radius: 9999px;
+}
+.admin-modal-scroll::-webkit-scrollbar-thumb:hover {
+  background: #CC7700;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: var(--color-bg); }
