@@ -31,9 +31,9 @@ function ResearcherCard({ r, lang, degreeMap }: {
   lang: Lang;
   degreeMap: Record<string, string>;
 }) {
-  const field = r.fieldKr || r.fieldEn;
+  const field = r.research;
   return (
-    <div className="rounded-2xl bg-white border border-gray-100 p-3 flex gap-4 hover:border-[#E88800]/40 transition-colors">
+    <div className="card-hover rounded-2xl bg-white border border-gray-100 p-3 flex gap-4 hover:border-[#E88800]/40">
       <div className="flex-shrink-0 rounded-xl w-[140px] h-[168px] flex items-center justify-center bg-gray-100 border border-gray-200 overflow-hidden">
         <MemberAvatar photoUrl={r.photoUrl} lang={lang} />
       </div>
@@ -61,7 +61,7 @@ function ResearcherCard({ r, lang, degreeMap }: {
 function AlumniCard({ a, lang, degreeMap }: { a: MemberRecord; lang: Lang; degreeMap: Record<string, string> }) {
   const degreeLabel = degreeMap[a.degree] ?? a.degree;
   return (
-    <div className="rounded-xl bg-white border border-gray-100 px-5 py-4 flex items-center justify-between gap-4 hover:border-[#E88800]/30 transition-colors">
+    <div className="card-hover rounded-xl bg-white border border-gray-100 px-5 py-4 flex items-center justify-between gap-4 hover:border-[#E88800]/40">
       <div>
         <div className="flex items-baseline gap-2 mb-0.5">
           <span className="font-semibold text-sm text-[#080d1e]">{lang === "KR" ? a.nameKo : a.nameEn}</span>

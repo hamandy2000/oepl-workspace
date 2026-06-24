@@ -1,9 +1,11 @@
 import type {
   AlumniMember,
+  ContentPhoto,
   GalleryItem,
   MemberGroup,
   MemberRecord,
   MembersData,
+  NewsFile,
   NewsItem,
   Patent,
   Professor,
@@ -14,6 +16,7 @@ import type {
 } from "@/types/content";
 
 import { isNewId } from "@/lib/data/ids";
+import { formatNewsPostDate, normalizePublication } from "@/lib/content/display";
 
 const PROFESSOR_ID = "default";
 
@@ -32,6 +35,15 @@ function optionalTimestamp(row: Record<string, unknown>, key: string): string | 
   return typeof v === "string" ? v : undefined;
 }
 
+function optionalString(row: Record<string, unknown>, key: string): string | undefined {
+  const v = row[key];
+  return typeof v === "string" && v.trim() ? v : undefined;
+}
+
+function researchFromRow(row: Record<string, unknown>): string {
+  return optionalString(row, "research") ?? "";
+}
+
 export function newsFromRow(row: Record<string, unknown>): NewsItem {
   return {
     id: rowId(row),
@@ -39,6 +51,11 @@ export function newsFromRow(row: Record<string, unknown>): NewsItem {
     date: row.date as string,
     title: row.title as string,
     detail: row.detail as string,
+    author: (row.author as string) ?? "",
+    viewCount: Number(row.view_count ?? 0),
+    pinned: Boolean(row.pinned),
+    photos: [],
+    files: [],
     createdAt: optionalTimestamp(row, "created_at"),
     updatedAt: optionalTimestamp(row, "updated_at"),
   };
@@ -47,16 +64,63 @@ export function newsFromRow(row: Record<string, unknown>): NewsItem {
 export function newsToRow(item: NewsItem, updating = false) {
   const row = withOptionalId(item.id, {
     type: item.type,
-    date: item.date,
+    date: item.date.trim() || formatNewsPostDate(),
     title: item.title,
     detail: item.detail,
+    author: item.author.trim() || "관리자",
+    pinned: item.pinned ?? false,
   });
+  if (!updating) row.view_count = item.viewCount ?? 0;
   if (updating) row.updated_at = new Date().toISOString();
   return row;
 }
 
+export function newsPhotoFromRow(row: Record<string, unknown>): ContentPhoto {
+  return {
+    id: rowId(row),
+    url: row.url as string,
+    sortOrder: Number(row.sort_order ?? 0),
+  };
+}
+
+export function newsPhotoToRow(newsId: number, photo: ContentPhoto, sortOrder: number) {
+  return withOptionalId(photo.id, {
+    news_id: newsId,
+    url: photo.url,
+    sort_order: sortOrder,
+  });
+}
+
+export function newsFileFromRow(row: Record<string, unknown>): NewsFile {
+  return {
+    id: rowId(row),
+    url: row.url as string,
+    fileName: row.file_name as string,
+    sortOrder: Number(row.sort_order ?? 0),
+  };
+}
+
+export function newsFileToRow(newsId: number, file: NewsFile, sortOrder: number) {
+  return withOptionalId(file.id, {
+    news_id: newsId,
+    url: file.url,
+    file_name: file.fileName,
+    sort_order: sortOrder,
+  });
+}
+
+function optionalDate(row: Record<string, unknown>, key: string): string | undefined {
+  const v = row[key];
+  if (typeof v === "string" && v) return v.slice(0, 10);
+  return undefined;
+}
+
 export function publicationFromRow(row: Record<string, unknown>): Publication {
   const doiLink = row.doi_link as string | null | undefined;
+  const createdAt = optionalTimestamp(row, "created_at");
+  const publishedAt =
+    optionalDate(row, "published_at") ??
+    (createdAt ? createdAt.slice(0, 10) : new Date().toISOString().slice(0, 10));
   return {
     id: rowId(row),
     type: row.type as Publication["type"],
@@ -66,20 +130,23 @@ export function publicationFromRow(row: Record<string, unknown>): Publication {
     journal: row.journal as string,
     doi: (row.doi as string) ?? "",
     doiLink: doiLink?.trim() || undefined,
-    createdAt: optionalTimestamp(row, "created_at"),
+    publishedAt,
+    createdAt,
     updatedAt: optionalTimestamp(row, "updated_at"),
   };
 }
 
 export function publicationToRow(item: Publication, updating = false) {
-  const row = withOptionalId(item.id, {
-    type: item.type,
-    title_ko: item.titleKo,
-    title_en: item.titleEn,
-    authors: item.authors,
-    journal: item.journal,
-    doi: item.doi,
-    doi_link: item.doiLink?.trim() || null,
+  const normalized = normalizePublication(item);
+  const row = withOptionalId(normalized.id, {
+    type: normalized.type,
+    title_ko: normalized.titleKo,
+    title_en: normalized.titleEn,
+    authors: normalized.authors,
+    journal: normalized.journal,
+    doi: normalized.doi,
+    doi_link: normalized.doiLink?.trim() || null,
+    published_at: normalized.publishedAt,
   });
   if (updating) row.updated_at = new Date().toISOString();
   return row;
@@ -91,6 +158,7 @@ export function galleryFromRow(row: Record<string, unknown>): GalleryItem {
     title: row.title as string,
     date: row.date as string,
     category: row.type as GalleryItem["category"],
+    photoUrl: optionalString(row, "photo_url"),
     createdAt: optionalTimestamp(row, "created_at"),
     updatedAt: optionalTimestamp(row, "updated_at"),
   };
@@ -101,6 +169,7 @@ export function galleryToRow(item: GalleryItem, updating = false) {
     title: item.title,
     date: item.date,
     type: item.category,
+    photo_url: item.photoUrl?.trim() || null,
   });
   if (updating) row.updated_at = new Date().toISOString();
   return row;
@@ -184,8 +253,7 @@ export function researcherFromRow(row: Record<string, unknown>): ResearcherMembe
     nameEn: row.name_en as string,
     degree: row.degree as string,
     email: (row.email as string) ?? "",
-    fieldKr: (row.field_kr as string) ?? "",
-    fieldEn: (row.field_en as string) ?? "",
+    research: researchFromRow(row),
     photoUrl: (row.photo_url as string) ?? "",
     createdAt: optionalTimestamp(row, "created_at"),
   };
@@ -212,8 +280,7 @@ export function researcherToRow(group: "postdocs" | "gradStudents", item: Resear
     name_en: item.nameEn,
     degree: item.degree,
     email: item.email,
-    field_kr: item.fieldKr,
-    field_en: item.fieldEn,
+    research: item.research,
     graduation_date: null,
     photo_url: item.photoUrl?.trim() || null,
   };
@@ -239,8 +306,7 @@ export function alumniToRow(group: "phdAlumni" | "msAlumni", item: AlumniMember)
     name_en: item.nameEn,
     degree: item.degree,
     email: null,
-    field_kr: null,
-    field_en: null,
+    research: null,
     graduation_date: item.graduationDate?.trim() || null,
     photo_url: item.photoUrl?.trim() || null,
   };
@@ -283,8 +349,7 @@ export function memberRecordToRow(item: MemberRecord) {
     name_en: item.nameEn,
     degree: item.degree,
     email: researcher ? item.email : null,
-    field_kr: researcher ? item.fieldKr : null,
-    field_en: researcher ? item.fieldEn : null,
+    research: researcher ? item.research : null,
     graduation_date: researcher ? null : item.graduationDate?.trim() || null,
     photo_url: item.photoUrl?.trim() || null,
   });
@@ -306,8 +371,7 @@ export function memberRecordFromRow(row: Record<string, unknown>): MemberRecord 
     memberGroup: group,
     ...a,
     email: "",
-    fieldKr: "",
-    fieldEn: "",
+    research: "",
   };
 }
 
@@ -322,8 +386,7 @@ export function flattenMembers(members: MembersData): MemberRecord[] {
         nameEn: r.nameEn,
         degree: r.degree,
         email: r.email,
-        fieldKr: r.fieldKr,
-        fieldEn: r.fieldEn,
+        research: r.research,
         graduationDate: "",
         photoUrl: r.photoUrl ?? "",
         createdAt: r.createdAt,
@@ -337,8 +400,7 @@ export function flattenMembers(members: MembersData): MemberRecord[] {
       nameEn: a.nameEn,
       degree: a.degree,
       email: "",
-      fieldKr: "",
-      fieldEn: "",
+      research: "",
       graduationDate: a.graduationDate,
       photoUrl: a.photoUrl ?? "",
       createdAt: a.createdAt,
@@ -370,8 +432,7 @@ export function applyMemberRecord(members: MembersData, record: MemberRecord): M
       nameEn: record.nameEn,
       degree: record.degree,
       email: record.email,
-      fieldKr: record.fieldKr,
-      fieldEn: record.fieldEn,
+      research: record.research,
       photoUrl: record.photoUrl ?? "",
       createdAt: record.createdAt,
     };
@@ -417,8 +478,7 @@ export function groupMembers(rows: Record<string, unknown>[]) {
         nameEn: record.nameEn,
         degree: record.degree,
         email: record.email,
-        fieldKr: record.fieldKr,
-        fieldEn: record.fieldEn,
+        research: record.research,
         photoUrl: record.photoUrl ?? "",
       });
     } else {

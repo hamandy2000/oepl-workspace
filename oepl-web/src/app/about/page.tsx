@@ -3,6 +3,8 @@ import Header from "@/components/Header";
 import FooterCTA from "@/components/FooterCTA";
 import { useLang } from "@/contexts/LangContext";
 import { useContent } from "@/contexts/ContentContext";
+import BrandIdentitySection from "@/components/BrandIdentitySection";
+import { formatPatentDate } from "@/lib/content/display";
 import { FileText } from "lucide-react";
 
 export default function AboutPage() {
@@ -40,6 +42,8 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
+
+        <BrandIdentitySection />
 
         {/* 연구 분야 소개 */}
         <section id="research" className="py-12 bg-gray-50">
@@ -107,7 +111,7 @@ export default function AboutPage() {
                           {isRegistered ? t.about.patentStatusRegistered : t.about.patentStatusPending}
                         </span>
                         <span className="text-[10px] text-[#9ca3af] font-mono">{patent.number}</span>
-                        <span className="text-[10px] text-[#9ca3af]">{patent.date}</span>
+                        <span className="text-[10px] text-[#9ca3af]">{formatPatentDate(patent.date)}</span>
                       </div>
 
                       <h3 className="font-semibold text-sm text-[#080d1e] leading-snug mb-1 group-hover:text-[#E88800] transition-colors">

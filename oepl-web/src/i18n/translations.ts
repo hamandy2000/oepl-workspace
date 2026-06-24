@@ -24,6 +24,21 @@ export interface Translations {
     sortNewest: string; sortOldest: string;
     count: (n: number) => string;
     empty: string;
+    backToList: string;
+    notFound: string;
+    loading: string;
+    author: string;
+    views: string;
+    postedDate: string;
+    defaultAuthor: string;
+    attachments: string;
+    noAttachments: string;
+    download: string;
+    prevPost: string;
+    nextPost: string;
+    noAdjacentPost: string;
+    badgeNew: string;
+    badgePinned: string;
   };
   publications: { label: string; title: string; more: string };
   footer: {
@@ -37,6 +52,40 @@ export interface Translations {
     areas: Array<{ tag: string; title: string; desc: string }>;
     patentLabel: string; patentTitle: string;
     patentStatusRegistered: string; patentStatusPending: string;
+    brand: {
+      label: string;
+      sectionTitle: string;
+      tabs: { symbol: string; logo: string; signature: string; colors: string };
+      previewBgLight: string;
+      previewBgDark: string;
+      downloadPng: string;
+      downloadAi: string;
+      aiDownload: string;
+      symbol: {
+        enTitle: string;
+        krTitle: string;
+        paragraphs: string[];
+        assets: { png: string };
+      };
+      logo: {
+        enTitle: string;
+        krTitle: string;
+        paragraphs: string[];
+        assets: { png: string };
+      };
+      signature: {
+        enTitle: string;
+        krTitle: string;
+        paragraphs: string[];
+        assets: { png: string };
+      };
+      colors: {
+        enTitle: string;
+        krTitle: string;
+        paragraphs: string[];
+        assets: { png: string };
+      };
+    };
   };
   members: {
     banner: string;
@@ -90,11 +139,18 @@ export interface Translations {
     cancel: string;
     saved: string;
     confirmDelete: string;
+    colNo: string;
     colTitle: string;
     colDate: string;
+    searchPlaceholder: string;
+    searchResult: (n: number) => string;
     logout: string;
     viewSite: string;
     saving: string;
+    pinned: string;
+    noticeSetting: string;
+    noticeOff: string;
+    noticePinned: string;
   };
 }
 
@@ -158,6 +214,21 @@ const KR: Translations = {
     sortOldest: "오래된순",
     count: (n) => `${n}개 소식`,
     empty: "등록된 소식이 없습니다.",
+    backToList: "목록으로",
+    notFound: "소식을 찾을 수 없습니다.",
+    loading: "불러오는 중…",
+    author: "작성자",
+    views: "조회",
+    postedDate: "작성일",
+    defaultAuthor: "관리자",
+    attachments: "첨부파일",
+    noAttachments: "첨부 파일이 없습니다",
+    download: "다운로드",
+    prevPost: "이전글",
+    nextPost: "다음글",
+    noAdjacentPost: "글이 없습니다",
+    badgeNew: "NEW",
+    badgePinned: "공지",
   },
   publications: { label: "Research Output", title: "최근 논문", more: "더보기" },
   footer: {
@@ -194,6 +265,51 @@ const KR: Translations = {
     patentTitle: "특허 소개",
     patentStatusRegistered: "등록",
     patentStatusPending: "출원",
+    brand: {
+      label: "Brand Identity",
+      sectionTitle: "연구실 CI 소개",
+      tabs: { symbol: "심볼마크", logo: "로고마크", signature: "시그니처", colors: "전용색상" },
+      previewBgLight: "흰 배경",
+      previewBgDark: "검은 배경",
+      downloadPng: "PNG 다운로드",
+      downloadAi: "AI 다운로드",
+      aiDownload: "/brand/oepl_logo_download.ai",
+      symbol: {
+        enTitle: "Symbol Mark",
+        krTitle: "심볼마크",
+        paragraphs: [
+          "OEPL 심볼마크는 벤젠 고리(유기분자·π-공액 구조)와 나뭇잎(친환경·지속가능 에너지), 두 개의 궤도 고리(전자물리·에너지 연구)를 결합한 그래픽 문양입니다.",
+          "유기전자물리 연구실의 학문적 정체성과 친환경 에너지 기술에 대한 비전을 동시에 전달합니다. 공식 행사, 포스터, 발표 자료 등에서 심볼마크 단독 또는 로고마크와 함께 사용할 수 있으며, 비율·색상·여백을 임의로 변경하지 않도록 해 주세요.",
+        ],
+        assets: { png: "/brand/oepl-symbol.png" },
+      },
+      logo: {
+        enTitle: "Logo Mark",
+        krTitle: "로고마크",
+        paragraphs: [
+          "로고마크는 OEPL 워드마크와 영문 풀네임(Organic Electronic Physics Laboratory)을 조합한 공식 타이포 표기입니다.",
+          "웹사이트, 명함, 보도자료 등 연구실명과 함께 브랜드를 전달해야 하는 경우 로고마크 사용을 권장합니다. 어두운 배경 위 사용을 기본으로 합니다.",
+        ],
+        assets: { png: "/brand/oepl-logo-mark.png" },
+      },
+      signature: {
+        enTitle: "Signature",
+        krTitle: "시그니처",
+        paragraphs: [
+          "시그니처는 심볼마크와 로고마크를 가로로 조합한 공식 CI 조합형입니다.",
+          "연구실을 대표하는 공식 문서, 배너, 홈페이지 등에서 심볼과 로고를 함께 사용할 때 시그니처를 사용합니다. 요소 간 간격과 비율을 임의로 변경하지 않도록 해 주세요.",
+        ],
+        assets: { png: "/brand/oepl-signature.png" },
+      },
+      colors: {
+        enTitle: "Brand Colors",
+        krTitle: "전용색상",
+        paragraphs: [
+          "OEPL 전용색상은 `src/styles/tokens.json`과 `globals.css`에 정의된 디자인 토큰 팔레트입니다. Brand Amber(`--color-brand`)는 심볼·강조 요소에, Neutral 900(`--color-neutral-900`)은 페이지·배너 배경에 사용합니다.",
+        ],
+        assets: { png: "/brand/oepl-brand-colors.png" },
+      },
+    },
   },
   members: {
     banner: "Members",
@@ -211,7 +327,7 @@ const KR: Translations = {
     msAlumniLabel: "Alumni · M.S",
     msAlumniTitle: "졸업생 소개 · M.S 과정",
     photo: "사진",
-    degreeMap: { "박사과정": "박사과정", "석사과정": "석사과정", "박사후연구원": "박사 후 연구원", "학부연구생": "학부연구생" },
+    degreeMap: { "박사과정": "박사과정", "석사과정": "석사과정", "박사 후 연구원": "박사 후 연구원", "박사후연구원": "박사 후 연구원" },
   },
   publication: {
     banner: "Publication",
@@ -268,11 +384,18 @@ const KR: Translations = {
     cancel: "취소",
     saved: "저장되었습니다.",
     confirmDelete: "삭제하시겠습니까?",
+    colNo: "번호",
     colTitle: "제목",
     colDate: "날짜",
+    searchPlaceholder: "검색…",
+    searchResult: (n) => `검색 결과 ${n}건`,
     logout: "로그아웃",
     viewSite: "사이트 보기 →",
     saving: "저장 중…",
+    pinned: "공지",
+    noticeSetting: "공지 설정",
+    noticeOff: "설정 안함",
+    noticePinned: "상단 고정",
   },
 };
 
@@ -336,6 +459,21 @@ const EN: Translations = {
     sortOldest: "Oldest",
     count: (n) => `${n} item${n !== 1 ? "s" : ""}`,
     empty: "No news items yet.",
+    backToList: "Back to list",
+    notFound: "News item not found.",
+    loading: "Loading…",
+    author: "Author",
+    views: "Views",
+    postedDate: "Posted",
+    defaultAuthor: "Admin",
+    attachments: "Attachments",
+    noAttachments: "No attachments",
+    download: "Download",
+    prevPost: "Previous",
+    nextPost: "Next",
+    noAdjacentPost: "No post",
+    badgeNew: "NEW",
+    badgePinned: "Notice",
   },
   publications: { label: "Research Output", title: "Recent Publications", more: "More" },
   footer: {
@@ -372,6 +510,51 @@ const EN: Translations = {
     patentTitle: "Patents",
     patentStatusRegistered: "Registered",
     patentStatusPending: "Pending",
+    brand: {
+      label: "Brand Identity",
+      sectionTitle: "Lab CI Guide",
+      tabs: { symbol: "Symbol Mark", logo: "Logo Mark", signature: "Signature", colors: "Brand Colors" },
+      previewBgLight: "Light",
+      previewBgDark: "Dark",
+      downloadPng: "Download PNG",
+      downloadAi: "Download AI",
+      aiDownload: "/brand/oepl_logo_download.ai",
+      symbol: {
+        enTitle: "Symbol Mark",
+        krTitle: "Symbol Mark",
+        paragraphs: [
+          "The OEPL symbol combines a benzene ring (organic molecules and π-conjugation), a leaf (eco-friendly and sustainable energy), and two orbital rings (electronic physics and energy research).",
+          "It conveys both our scientific identity and our vision for green energy technology. Use it alone or with the logo mark on posters and official materials. Do not alter proportions, colors, or clear space.",
+        ],
+        assets: { png: "/brand/oepl-symbol.png" },
+      },
+      logo: {
+        enTitle: "Logo Mark",
+        krTitle: "Logo Mark",
+        paragraphs: [
+          "The logo mark is the official typographic lockup of the OEPL wordmark and full name (Organic Electronic Physics Laboratory).",
+          "Use the logo mark when the lab name and brand should appear together — on websites, business cards, and press materials. Dark backgrounds are preferred.",
+        ],
+        assets: { png: "/brand/oepl-logo-mark.png" },
+      },
+      signature: {
+        enTitle: "Signature",
+        krTitle: "Signature",
+        paragraphs: [
+          "The signature combines the symbol mark and logo mark in a horizontal lockup.",
+          "Use the signature on official documents, banners, and the homepage when both the symbol and logo should appear together. Do not alter spacing or proportions.",
+        ],
+        assets: { png: "/brand/oepl-signature.png" },
+      },
+      colors: {
+        enTitle: "Brand Colors",
+        krTitle: "Brand Colors",
+        paragraphs: [
+          "OEPL brand colors come from the design tokens in `src/styles/tokens.json` and `globals.css`. Brand Amber (`--color-brand`) is used for symbols and accents; Neutral 900 (`--color-neutral-900`) for page and banner backgrounds.",
+        ],
+        assets: { png: "/brand/oepl-brand-colors.png" },
+      },
+    },
   },
   members: {
     banner: "Members",
@@ -389,7 +572,7 @@ const EN: Translations = {
     msAlumniLabel: "Alumni · M.S",
     msAlumniTitle: "Alumni · M.S Program",
     photo: "Photo",
-    degreeMap: { "박사과정": "Ph.D Student", "석사과정": "M.S Student", "박사후연구원": "Postdoc", "학부연구생": "Undergrad" },
+    degreeMap: { "박사과정": "Ph.D Student", "석사과정": "M.S Student", "박사 후 연구원": "Postdoc", "박사후연구원": "Postdoc" },
   },
   publication: {
     banner: "Publication",
@@ -446,11 +629,18 @@ const EN: Translations = {
     cancel: "Cancel",
     saved: "Saved.",
     confirmDelete: "Delete this item?",
+    colNo: "No.",
     colTitle: "Title",
     colDate: "Date",
+    searchPlaceholder: "Search…",
+    searchResult: (n) => `${n} result${n === 1 ? "" : "s"}`,
     logout: "Log out",
     viewSite: "View site →",
     saving: "Saving…",
+    pinned: "Notice",
+    noticeSetting: "Notice",
+    noticeOff: "None",
+    noticePinned: "Pin to top",
   },
 };
 

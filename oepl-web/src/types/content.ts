@@ -6,24 +6,32 @@ export type PatentStatus = "registered" | "pending";
 
 export type MemberGroup = "postdocs" | "gradStudents" | "phdAlumni" | "msAlumni";
 
+export interface ContentPhoto {
+  id: number;
+  url: string;
+  sortOrder: number;
+}
 
+export interface NewsFile {
+  id: number;
+  url: string;
+  fileName: string;
+  sortOrder: number;
+}
 
 export interface NewsItem {
-
   id: number;
-
   type: string;
-
   date: string;
-
   title: string;
-
   detail: string;
-
+  author: string;
+  viewCount: number;
+  pinned: boolean;
+  photos: ContentPhoto[];
+  files: NewsFile[];
   createdAt?: string;
-
   updatedAt?: string;
-
 }
 
 
@@ -46,6 +54,9 @@ export interface Publication {
 
   doiLink?: string;
 
+  /** 게재일 — YYYY-MM-DD */
+  publishedAt: string;
+
   createdAt?: string;
 
   updatedAt?: string;
@@ -55,19 +66,13 @@ export interface Publication {
 
 
 export interface GalleryItem {
-
   id: number;
-
   title: string;
-
   date: string;
-
   category: GalleryCategory;
-
+  photoUrl?: string;
   createdAt?: string;
-
   updatedAt?: string;
-
 }
 
 
@@ -146,9 +151,7 @@ export interface ResearcherMember {
 
   email: string;
 
-  fieldKr: string;
-
-  fieldEn: string;
+  research: string;
 
   photoUrl?: string;
 
@@ -192,9 +195,7 @@ export interface MemberRecord {
 
   email: string;
 
-  fieldKr: string;
-
-  fieldEn: string;
+  research: string;
 
   graduationDate: string;
 
@@ -238,12 +239,9 @@ export interface SiteContent {
 
 
 
-/** Publication DOI 표시/링크용 */
-
+/** Publication DOI 링크 — doi_link가 있을 때만 사용 */
 export function publicationDoiLink(pub: Publication): string {
-
-  return pub.doiLink?.trim() || pub.doi.trim();
-
+  return pub.doiLink?.trim() ?? "";
 }
 
 

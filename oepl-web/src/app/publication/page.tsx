@@ -6,7 +6,7 @@ import { ExternalLink, ChevronRight, ChevronLeft } from "lucide-react";
 import { useLang } from "@/contexts/LangContext";
 import { useContent } from "@/contexts/ContentContext";
 import { publicationDoiLink } from "@/types/content";
-import { publicationSortKey, publicationYear } from "@/lib/content/display";
+import { publicationSortKey, publicationYear, formatPublicationDate } from "@/lib/content/display";
 
 function FilterBtn({ value, active, onClick }: { value: string; active: boolean; onClick: () => void }) {
   return (
@@ -116,14 +116,29 @@ export default function PublicationPage() {
   const PER_PAGE = 5;
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
-  function handleScroll() {
+  function updateScrollButtons() {
     const el = scrollRef.current;
     if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 0);
-    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+    const hasOverflow = el.scrollWidth > el.clientWidth + 1;
+    setCanScrollLeft(hasOverflow && el.scrollLeft > 0);
+    setCanScrollRight(hasOverflow && el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
   }
+
+  useEffect(() => {
+    updateScrollButtons();
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const ro = new ResizeObserver(updateScrollButtons);
+    ro.observe(el);
+    window.addEventListener("resize", updateScrollButtons);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", updateScrollButtons);
+    };
+  }, [years]);
 
   function scrollLeft() {
     scrollRef.current?.scrollBy({ left: -200, behavior: "smooth" });
@@ -189,7 +204,7 @@ export default function PublicationPage() {
                   </div>
                 )}
 
-                <div ref={scrollRef} className="overflow-x-auto scrollbar-hide" onScroll={handleScroll}>
+                <div ref={scrollRef} className="overflow-x-auto scrollbar-hide" onScroll={updateScrollButtons}>
                   <div className="flex items-center gap-2 w-max px-1">
                   {years.map((y) => (
                     <FilterBtn key={y} value={y} active={yearFilter === y} onClick={() => setYearFilterAndReset(y)} />
@@ -223,7 +238,7 @@ export default function PublicationPage() {
             <div className="flex flex-col gap-4">
               {paginated.map((pub) => {
                 const doiHref = publicationDoiLink(pub);
-                const year = publicationYear(pub);
+                const pubDate = formatPublicationDate(pub);
                 return (
                 <div
                   key={pub.id}
@@ -234,15 +249,15 @@ export default function PublicationPage() {
                       <span
                         className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
                         style={{
-                          background: pub.type === "Journal" ? "rgba(232,136,0,0.1)" : "#f3f4f6",
-                          color: pub.type === "Journal" ? "#E88800" : "#6b7280",
-                          border: `1px solid ${pub.type === "Journal" ? "rgba(232,136,0,0.25)" : "#e5e7eb"}`,
+                          background: "rgba(232,136,0,0.1)",
+                          color: "#E88800",
+                          border: "1px solid rgba(232,136,0,0.25)",
                         }}
                       >
                         {pub.journal}
                       </span>
-                      {year !== null && (
-                        <span className="text-[10px] font-medium text-[#9ca3af]">{year}</span>
+                      {pubDate && (
+                        <span className="text-[10px] font-medium text-[#9ca3af]">{pubDate}</span>
                       )}
                     </div>
                     {doiHref && (
@@ -272,14 +287,18 @@ export default function PublicationPage() {
                   <div>
                     <p className="text-xs text-[#6b7280]">{pub.authors}</p>
                     {pub.doi ? (
-                      <a
-                        href={doiHref}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-xs mt-0.5 text-[#E88800] font-medium hover:underline inline-block"
-                      >
-                        {pub.doi}
-                      </a>
+                      doiHref ? (
+                        <a
+                          href={doiHref}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-xs mt-0.5 text-[#E88800] font-medium hover:underline inline-block"
+                        >
+                          {pub.doi}
+                        </a>
+                      ) : (
+                        <p className="text-xs mt-0.5 text-[#E88800] font-medium">{pub.doi}</p>
+                      )
                     ) : null}
                   </div>
                 </div>

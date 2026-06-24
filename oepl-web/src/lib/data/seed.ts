@@ -1,4 +1,4 @@
-import type { Professor, SiteContent } from "@/types/content";
+import type { GalleryCategory, Professor, SiteContent, NewsItem, GalleryItem, Publication } from "@/types/content";
 import { createSeedIdFactory } from "./ids";
 
 const id = createSeedIdFactory(1);
@@ -28,11 +28,20 @@ const pub = (
   authors,
   journal,
   doi,
-  createdAt: `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T00:00:00Z`,
+  publishedAt: `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
 });
 
-export const seedContent: SiteContent = {
+const rawSeedContent = {
   news: [
+    {
+      id: id(),
+      type: "News",
+      date: "2026.03.01",
+      title: "2026학년도 OEPL 대학원생 모집 안내",
+      detail:
+        "유기전자물리 연구실(OEPL)에서 2026학년도 석·박사 통합과정 대학원생을 모집합니다.\n\n■ 모집 분야: 유기태양전지, 유기반도체 소자\n■ 지원 자격: 관련 학과 졸업(예정)자 또는 동등 이상의 학력 소지자\n■ 문의: oep@ulsan.ac.kr",
+      pinned: true,
+    },
     { id: id(), type: "News", date: "2023.05.07", title: "OEPL 홈페이지 개설!", detail: "OEPL이 드디어 홈페이지를 새로 개설하였습니다. 앞으로 많은 관심 부탁드립니다." },
     { id: id(), type: "Research", date: "2023.04.15", title: "유기태양전지 효율 17.38% 달성", detail: "유기태양전지 효율 세계 최고 수준에 근접하는 17.38% 효율 달성 성과를 발표하였습니다." },
     { id: id(), type: "Award", date: "2023.03.20", title: "국내외 공동연구 협약 체결", detail: "KAIST·UNIST·재료연구소·에너지생산기술연구소와 공동 연구 협약을 체결하였습니다." },
@@ -90,7 +99,7 @@ export const seedContent: SiteContent = {
       affiliationKr: "울산대학교 공과대학 반도체물리공학과",
       affiliationEn: "Dept. of Semiconductor Physics Engineering, Univ. of Ulsan",
       email: "sucho@ulsan.ac.kr",
-      scholar: "https://scholar.google.com",
+      scholar: "https://scholar.google.com/citations?hl=ko&user=aAVyRKoAAAAJ",
       education: [
         tl("2000 – 2005", "서울대학교 물리학과 학사", "B.S. in Physics, Seoul National University"),
         tl("2005 – 2007", "서울대학교 물리학과 석사", "M.S. in Physics, Seoul National University"),
@@ -108,17 +117,17 @@ export const seedContent: SiteContent = {
       ],
     },
     postdocs: [
-      { id: id(), nameKo: "홍길동", nameEn: "Hong Gil Dong", degree: "박사후연구원", email: "hgd@ulsan.ac.kr", fieldKr: "유기태양전지 효율 향상", fieldEn: "OPV Efficiency Enhancement" },
-      { id: id(), nameKo: "김철수", nameEn: "Kim Chul Su", degree: "박사후연구원", email: "kcs@ulsan.ac.kr", fieldKr: "반투명 전극 소재", fieldEn: "Semi-transparent Electrode" },
-      { id: id(), nameKo: "유나현", nameEn: "Yoo Na Hyeon", degree: "박사후연구원", email: "ynh@ulsan.ac.kr", fieldKr: "유기 소재 광물리", fieldEn: "Organic Material Photophysics" },
+      { id: id(), nameKo: "홍길동", nameEn: "Hong Gil Dong", degree: "박사 후 연구원", email: "hgd@ulsan.ac.kr", research: "유기태양전지 효율 향상" },
+      { id: id(), nameKo: "김철수", nameEn: "Kim Chul Su", degree: "박사 후 연구원", email: "kcs@ulsan.ac.kr", research: "반투명 전극 소재" },
+      { id: id(), nameKo: "유나현", nameEn: "Yoo Na Hyeon", degree: "박사 후 연구원", email: "ynh@ulsan.ac.kr", research: "유기 소재 광물리" },
     ],
     gradStudents: [
-      { id: id(), nameKo: "이영희", nameEn: "Lee Young Hee", degree: "박사과정", email: "lyh@ulsan.ac.kr", fieldKr: "유기 소재 합성", fieldEn: "Organic Material Synthesis" },
-      { id: id(), nameKo: "박지민", nameEn: "Park Ji Min", degree: "박사과정", email: "pjm@ulsan.ac.kr", fieldKr: "소자 공정 개발", fieldEn: "Device Process Development" },
-      { id: id(), nameKo: "최민준", nameEn: "Choi Min Jun", degree: "석사과정", email: "cmj@ulsan.ac.kr", fieldKr: "에너지 손실 분석", fieldEn: "Energy Loss Analysis" },
-      { id: id(), nameKo: "정수빈", nameEn: "Jung Su Bin", degree: "석사과정", email: "jsb@ulsan.ac.kr", fieldKr: "광흡수 소재 연구", fieldEn: "Light-Absorbing Materials" },
-      { id: id(), nameKo: "오민준", nameEn: "Oh Min Jun", degree: "석사과정", email: "omj@ulsan.ac.kr", fieldKr: "페로브스카이트 소재", fieldEn: "Perovskite Materials" },
-      { id: id(), nameKo: "강하은", nameEn: "Kang Ha Eun", degree: "학부연구생", email: "khe@ulsan.ac.kr", fieldKr: "전하 이동 특성 분석", fieldEn: "Charge Transport Analysis" },
+      { id: id(), nameKo: "이영희", nameEn: "Lee Young Hee", degree: "박사과정", email: "lyh@ulsan.ac.kr", research: "유기 소재 합성" },
+      { id: id(), nameKo: "박지민", nameEn: "Park Ji Min", degree: "박사과정", email: "pjm@ulsan.ac.kr", research: "소자 공정 개발" },
+      { id: id(), nameKo: "최민준", nameEn: "Choi Min Jun", degree: "석사과정", email: "cmj@ulsan.ac.kr", research: "에너지 손실 분석" },
+      { id: id(), nameKo: "정수빈", nameEn: "Jung Su Bin", degree: "석사과정", email: "jsb@ulsan.ac.kr", research: "광흡수 소재 연구" },
+      { id: id(), nameKo: "오민준", nameEn: "Oh Min Jun", degree: "석사과정", email: "omj@ulsan.ac.kr", research: "페로브스카이트 소재" },
+      { id: id(), nameKo: "강하은", nameEn: "Kang Ha Eun", degree: "석사과정", email: "khe@ulsan.ac.kr", research: "전하 이동 특성 분석" },
     ],
     phdAlumni: [
       { id: id(), nameKo: "오준석", nameEn: "Oh Jun Seok", degree: "박사과정", graduationDate: "2023-02-01" },
@@ -133,8 +142,48 @@ export const seedContent: SiteContent = {
   },
 };
 
+export const seedContent: SiteContent = {
+  ...rawSeedContent,
+  news: rawSeedContent.news.map((item) => ({
+    ...item,
+    author: "관리자",
+    viewCount: 0,
+    pinned: Boolean((item as { pinned?: boolean }).pinned),
+    photos: [],
+    files: [],
+  })),
+  gallery: rawSeedContent.gallery.map((item) => ({
+    ...item,
+    category: item.category as GalleryCategory,
+  })),
+} as SiteContent;
+
 export const STORAGE_KEY = "oepl-site-content";
 export const PROFESSOR_STORAGE_KEY = "oepl-professor";
+
+const PINNED_SAMPLE_TITLE = "2026학년도 OEPL 대학원생 모집 안내";
+
+function pinnedSampleNews(news: NewsItem[]): NewsItem {
+  const maxId = news.reduce((max, n) => Math.max(max, n.id), 0);
+  return {
+    id: maxId + 1,
+    type: "News",
+    date: "2026.03.01",
+    title: PINNED_SAMPLE_TITLE,
+    detail:
+      "유기전자물리 연구실(OEPL)에서 2026학년도 석·박사 통합과정 대학원생을 모집합니다.\n\n■ 모집 분야: 유기태양전지, 유기반도체 소자\n■ 지원 자격: 관련 학과 졸업(예정)자 또는 동등 이상의 학력 소지자\n■ 문의: oep@ulsan.ac.kr",
+    author: "관리자",
+    viewCount: 0,
+    pinned: true,
+    photos: [],
+    files: [],
+  };
+}
+
+function ensurePinnedSampleNews(news: NewsItem[]): NewsItem[] {
+  if (news.some((n) => n.pinned)) return news;
+  return [pinnedSampleNews(news), ...news];
+}
 
 export function loadProfessor(): Professor {
   if (typeof window === "undefined") return seedContent.members.professor;
@@ -159,11 +208,49 @@ export function loadContent(): SiteContent {
     const base = raw ? (JSON.parse(raw) as SiteContent) : seedContent;
     return {
       ...base,
+      news: ensurePinnedSampleNews((base.news ?? []).map(normalizeNewsItem)),
+      publications: (base.publications ?? []).map(normalizePublicationItem),
+      gallery: (base.gallery ?? []).map(normalizeGalleryItem),
       members: { ...base.members, professor: loadProfessor() },
     };
   } catch {
-    return { ...seedContent, members: { ...seedContent.members, professor: loadProfessor() } };
+    return {
+      ...seedContent,
+      news: seedContent.news.map(normalizeNewsItem),
+      members: { ...seedContent.members, professor: loadProfessor() },
+    };
   }
+}
+
+function normalizeNewsItem(item: NewsItem & { photoUrl?: string }): NewsItem {
+  const photos =
+    item.photos?.length
+      ? item.photos
+      : item.photoUrl
+        ? [{ id: 1, url: item.photoUrl, sortOrder: 0 }]
+        : [];
+  return {
+    ...item,
+    author: item.author ?? "관리자",
+    viewCount: item.viewCount ?? 0,
+    pinned: item.pinned ?? false,
+    photos,
+    files: item.files ?? [],
+  };
+}
+
+function normalizeGalleryItem(item: GalleryItem & { photos?: { url: string }[] }): GalleryItem {
+  const photoUrl =
+    item.photoUrl ??
+    (item.photos?.length ? item.photos[0].url : undefined);
+  return { ...item, photoUrl };
+}
+
+function normalizePublicationItem(item: Publication): Publication {
+  const publishedAt =
+    item.publishedAt?.trim() ||
+    (item.createdAt ? item.createdAt.slice(0, 10) : new Date().toISOString().slice(0, 10));
+  return { ...item, publishedAt };
 }
 
 export function saveContent(content: SiteContent) {

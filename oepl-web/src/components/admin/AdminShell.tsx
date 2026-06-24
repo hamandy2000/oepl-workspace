@@ -83,7 +83,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             </button>
           </div>
         </header>
-        <main className="flex-1 p-8 bg-[#f9fafb]">{children}</main>
+        <main className="flex-1 p-8 pb-12 bg-[#f9fafb]">{children}</main>
       </div>
     </div>
   );

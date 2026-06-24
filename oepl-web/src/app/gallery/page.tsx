@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useLang } from "@/contexts/LangContext";
 import { useContent } from "@/contexts/ContentContext";
 import type { GalleryCategory } from "@/types/content";
+import { galleryCoverPhoto } from "@/lib/content/display";
 
 type Category = "전체" | GalleryCategory;
 
@@ -85,7 +86,9 @@ export default function GalleryPage() {
 
             {/* 3-column grid */}
             <div className="grid grid-cols-3 gap-8">
-              {paginated.map((photo) => (
+              {paginated.map((photo) => {
+                const cover = galleryCoverPhoto(photo);
+                return (
                 <div key={photo.id} className="flex flex-col gap-3 group cursor-pointer">
                   {/* Image placeholder */}
                   <div
@@ -93,11 +96,16 @@ export default function GalleryPage() {
                     style={{ aspectRatio: "5/3" }}
                   >
                     <div className="w-full h-full flex items-center justify-center transition-transform duration-300 group-hover:scale-[1.03]">
-                      <svg className="opacity-20 w-10 h-10" viewBox="0 0 24 24" fill="none">
-                        <rect x="3" y="3" width="18" height="18" rx="2" stroke="#E88800" strokeWidth="1.5" />
-                        <circle cx="8.5" cy="8.5" r="1.5" stroke="#E88800" strokeWidth="1.5" />
-                        <path d="M21 15l-5-5L5 21" stroke="#E88800" strokeWidth="1.5" strokeLinejoin="round" />
-                      </svg>
+                      {cover ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={cover} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <svg className="opacity-20 w-10 h-10" viewBox="0 0 24 24" fill="none">
+                          <rect x="3" y="3" width="18" height="18" rx="2" stroke="#E88800" strokeWidth="1.5" />
+                          <circle cx="8.5" cy="8.5" r="1.5" stroke="#E88800" strokeWidth="1.5" />
+                          <path d="M21 15l-5-5L5 21" stroke="#E88800" strokeWidth="1.5" strokeLinejoin="round" />
+                        </svg>
+                      )}
                     </div>
                   </div>
 
@@ -121,7 +129,7 @@ export default function GalleryPage() {
                     </p>
                   </div>
                 </div>
-              ))}
+              );})}
             </div>
 
             {/* Empty state */}

@@ -52,6 +52,16 @@ import {
 
 } from "@/lib/data/mappers";
 
+import {
+
+  attachNewsMedia,
+
+  removeNewsMedia,
+
+} from "@/lib/data/media-sync";
+
+import { removeGalleryPhoto } from "@/lib/supabase/content-media";
+
 
 
 function supabase() {
@@ -73,9 +83,9 @@ async function upsertEntity<T extends { id: number }>(
     if (error) throw new Error(error.message);
     return fromRow(data as Record<string, unknown>);
   }
-  const { error } = await supabase().from(table).upsert(toRow(item, true));
+  const { data, error } = await supabase().from(table).upsert(toRow(item, true)).select().single();
   if (error) throw new Error(error.message);
-  return item;
+  return fromRow(data as Record<string, unknown>);
 }
 
 
@@ -102,17 +112,21 @@ export async function fetchSiteContent(): Promise<SiteContent> {
 
 
 
-    const [newsRes, publicationsRes, galleryRes, patentsRes, membersRes] = await Promise.all([
+    const [newsRes, publicationsRes, galleryRes, patentsRes, membersRes, newsPhotosRes, newsFilesRes] = await Promise.all([
 
       sb.from("news").select("*").order("created_at", { ascending: false }),
 
-      sb.from("publications").select("*").order("created_at", { ascending: false }),
+      sb.from("publications").select("*").order("published_at", { ascending: false }),
 
       sb.from("gallery").select("*").order("created_at", { ascending: false }),
 
       sb.from("patents").select("*").order("created_at", { ascending: false }),
 
       sb.from("members").select("*").order("created_at", { ascending: true }),
+
+      sb.from("news_photos").select("*").order("sort_order"),
+
+      sb.from("news_file").select("*").order("sort_order"),
 
     ]);
 
@@ -172,7 +186,15 @@ export async function fetchSiteContent(): Promise<SiteContent> {
 
     return {
 
-      news: (newsRes.data ?? []).map(newsFromRow),
+      news: attachNewsMedia(
+
+        (newsRes.data ?? []).map(newsFromRow),
+
+        newsPhotosRes.error ? [] : (newsPhotosRes.data ?? []),
+
+        newsFilesRes.error ? [] : (newsFilesRes.data ?? [])
+
+      ),
 
       publications: (publicationsRes.data ?? []).map(publicationFromRow),
 
@@ -230,6 +252,8 @@ export async function removeNews(id: number): Promise<void> {
 
   if (!isSupabaseConfigured()) return;
 
+  await removeNewsMedia(id);
+
   const { error } = await supabase().from("news").delete().eq("id", id);
 
   if (error) throw new Error(error.message);
@@ -273,6 +297,8 @@ export async function persistGallery(item: GalleryItem): Promise<GalleryItem> {
 export async function removeGallery(id: number): Promise<void> {
 
   if (!isSupabaseConfigured()) return;
+
+  await removeGalleryPhoto(id);
 
   const { error } = await supabase().from("gallery").delete().eq("id", id);
 

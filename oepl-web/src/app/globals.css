@@ -235,3 +235,43 @@ body {
 ::-webkit-scrollbar-track { background: var(--color-bg); }
 ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-brand); }
+
+/* Brand CI — draw / reveal animations */
+@keyframes brand-stroke-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes brand-image-reveal {
+  from {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0.35;
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+.brand-draw-stroke {
+  animation: brand-stroke-draw var(--draw-duration, 1s) ease forwards;
+  animation-delay: var(--draw-delay, 0s);
+}
+
+.brand-reveal-image {
+  animation: brand-image-reveal 1.05s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-draw-stroke {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .brand-reveal-image {
+    animation: none;
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}

@@ -1,11 +1,12 @@
 import type { AlumniMember, MemberGroup, MemberRecord, MembersData, ResearcherMember } from "@/types/content";
 import { flattenMembers, isResearcherGroup, memberRecordFromRow } from "@/lib/data/mappers";
 
+export const POSTDOC_DEGREE = "박사 후 연구원";
+
 export const MEMBER_DEGREE_OPTIONS = [
-  "박사후연구원",
+  POSTDOC_DEGREE,
   "박사과정",
   "석사과정",
-  "학부연구생",
 ] as const;
 
 export type MemberDegree = (typeof MEMBER_DEGREE_OPTIONS)[number];
@@ -16,14 +17,15 @@ export function normalizeDegree(degree: string, memberGroup?: MemberGroup): Memb
   const exact = MEMBER_DEGREE_OPTIONS.find((d) => d === trimmed || d === compact);
   if (exact) return exact;
 
-  if (compact.includes("박사후") || compact.toLowerCase().includes("postdoc")) return "박사후연구원";
-  if (compact.includes("학부")) return "학부연구생";
+  if (compact.includes("박사후") || compact.includes("박사후연구원") || compact.toLowerCase().includes("postdoc")) {
+    return POSTDOC_DEGREE;
+  }
   if (compact.includes("석사")) return "석사과정";
   if (compact.includes("박사")) return "박사과정";
 
   switch (memberGroup) {
     case "postdocs":
-      return "박사후연구원";
+      return POSTDOC_DEGREE;
     case "msAlumni":
       return "석사과정";
     case "phdAlumni":
@@ -31,7 +33,7 @@ export function normalizeDegree(degree: string, memberGroup?: MemberGroup): Memb
     case "gradStudents":
       return "박사과정";
     default:
-      return "박사후연구원";
+      return POSTDOC_DEGREE;
   }
 }
 
@@ -67,7 +69,7 @@ export function inferMemberGroup(
   if (hasGraduated(item)) {
     return degree === "석사과정" ? "msAlumni" : "phdAlumni";
   }
-  return degree === "박사후연구원" ? "postdocs" : "gradStudents";
+  return degree === POSTDOC_DEGREE ? "postdocs" : "gradStudents";
 }
 
 export function normalizeMemberRecord(item: MemberRecord): MemberRecord {
@@ -79,8 +81,7 @@ export function normalizeMemberRecord(item: MemberRecord): MemberRecord {
       ...base,
       memberGroup,
       email: "",
-      fieldKr: "",
-      fieldEn: "",
+      research: "",
     };
   }
   return {
@@ -122,8 +123,7 @@ export function buildMemberGroupsFromRows(
         nameEn: record.nameEn,
         degree: record.degree,
         email: record.email,
-        fieldKr: record.fieldKr,
-        fieldEn: record.fieldEn,
+        research: record.research,
         photoUrl: record.photoUrl,
         createdAt: record.createdAt,
       });
@@ -152,13 +152,13 @@ export function groupMembersForDisplay(members: MembersData) {
     .sort(compareMemberInsertOrder);
 
   return {
-    postdocs: all.filter((m) => !hasGraduated(m) && m.degree === "박사후연구원"),
-    gradStudents: all.filter((m) => !hasGraduated(m) && m.degree !== "박사후연구원"),
+    postdocs: all.filter((m) => !hasGraduated(m) && m.degree === POSTDOC_DEGREE),
+    gradStudents: all.filter((m) => !hasGraduated(m) && m.degree !== POSTDOC_DEGREE),
     phdAlumni: all.filter((m) => hasGraduated(m) && m.degree !== "석사과정"),
     msAlumni: all.filter((m) => hasGraduated(m) && m.degree === "석사과정"),
   };
 }
 
 export function memberFieldDisplay(item: MemberRecord): string {
-  return item.fieldKr || item.fieldEn || "—";
+  return item.research.trim() || "—";
 }

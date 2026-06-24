@@ -33,9 +33,11 @@ async function probe(table, columns) {
 
 const checks = [
   probe("news", ["id", "type", "title", "detail"]),
+  probe("news_photos", ["id", "news_id", "url", "sort_order"]),
+  probe("news_file", ["id", "news_id", "url", "file_name"]),
   probe("publications", ["id", "title_ko", "title_en", "doi_link"]),
-  probe("gallery", ["id", "type"]),
-  probe("members", ["id", "photo_url", "graduation_date"]),
+  probe("gallery", ["id", "type", "photo_url"]),
+  probe("members", ["id", "photo_url", "graduation_date", "research"]),
 ];
 
 const results = await Promise.all(checks);

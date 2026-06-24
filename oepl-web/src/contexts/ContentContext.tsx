@@ -18,6 +18,7 @@ import type {
   SiteContent,
 } from "@/types/content";
 import { NEW_ID, isNewId, nextLocalId } from "@/lib/data/ids";
+import { formatNewsPostDate, normalizePublication } from "@/lib/content/display";
 import { seedContent } from "@/lib/data/seed";
 import {
   applyMemberRecord,
@@ -44,11 +45,11 @@ interface ContentContextValue {
   content: SiteContent;
   ready: boolean;
   saving: boolean;
-  upsertNews: (item: NewsItem) => Promise<void>;
+  upsertNews: (item: NewsItem) => Promise<NewsItem>;
   deleteNews: (id: number) => Promise<void>;
   upsertPublication: (item: Publication) => Promise<void>;
   deletePublication: (id: number) => Promise<void>;
-  upsertGallery: (item: GalleryItem) => Promise<void>;
+  upsertGallery: (item: GalleryItem) => Promise<GalleryItem>;
   deleteGallery: (id: number) => Promise<void>;
   upsertPatent: (item: Patent) => Promise<void>;
   deletePatent: (id: number) => Promise<void>;
@@ -94,41 +95,57 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const upsertNews = useCallback(async (item: NewsItem) => {
-    const draft = { ...item, id: item.id || NEW_ID };
-    const isNew = isNewId(draft.id);
+  const upsertNews = useCallback(async (item: NewsItem): Promise<NewsItem> => {
+    const draftItem = { ...item, id: item.id || NEW_ID };
+    const isNew = isNewId(draftItem.id);
 
-    setContent((prev) => {
-      const exists = !isNew && prev.news.some((n) => n.id === draft.id);
-      const news = exists
-        ? prev.news.map((n) => (n.id === draft.id ? draft : n))
-        : [draft, ...prev.news];
-      const next = { ...prev, news };
-
-      if (isSupabaseConfigured()) {
-        void runPersist(async () => {
-          const saved = await persistNews(draft);
-          setContent((p) => ({
-            ...p,
-            news: isNew
-              ? p.news.map((n) => (n.id === NEW_ID ? saved : n))
-              : p.news.map((n) => (n.id === saved.id ? saved : n)),
-          }));
-        });
-      } else {
-        const saved = isNew ? { ...draft, id: nextLocalId(prev.news) } : draft;
-        const local = {
-          ...next,
-          news: isNew
-            ? next.news.map((n) => (n.id === NEW_ID ? saved : n))
-            : next.news.map((n) => (n.id === saved.id ? saved : n)),
+    if (isSupabaseConfigured()) {
+      setSaving(true);
+      try {
+        const saved = await persistNews(draftItem);
+        const full: NewsItem = {
+          ...saved,
+          date: saved.date?.trim() || draftItem.date?.trim() || formatNewsPostDate(),
+          createdAt: saved.createdAt ?? draftItem.createdAt,
+          photos: draftItem.photos ?? [],
+          files: draftItem.files ?? [],
         };
-        persistLocalContent(local);
-        return local;
+        setContent((p) => ({
+          ...p,
+          news: p.news.some((n) => n.id === full.id)
+            ? p.news.map((n) => (n.id === full.id ? full : n))
+            : [full, ...p.news.filter((n) => n.id !== NEW_ID)],
+        }));
+        return full;
+      } catch (err) {
+        console.error("[ContentContext] persist failed", err);
+        alert("저장에 실패했습니다. 로그인 상태를 확인해 주세요.");
+        throw err;
+      } finally {
+        setSaving(false);
       }
+    }
+
+    let saved!: NewsItem;
+    setContent((prev) => {
+      const exists = !isNew && prev.news.some((n) => n.id === draftItem.id);
+      saved = isNew
+        ? {
+            ...draftItem,
+            id: nextLocalId(prev.news),
+            date: draftItem.date.trim() || formatNewsPostDate(),
+            createdAt: draftItem.createdAt ?? new Date().toISOString(),
+          }
+        : draftItem;
+      const news = exists
+        ? prev.news.map((n) => (n.id === saved.id ? saved : n))
+        : [saved, ...prev.news.filter((n) => n.id !== NEW_ID)];
+      const next = { ...prev, news };
+      persistLocalContent(next);
       return next;
     });
-  }, [runPersist]);
+    return saved;
+  }, []);
 
   const deleteNews = useCallback(async (id: number) => {
     setContent((prev) => {
@@ -143,7 +160,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   }, [runPersist]);
 
   const upsertPublication = useCallback(async (item: Publication) => {
-    const draft = { ...item, id: item.id || NEW_ID };
+    const draft = normalizePublication({ ...item, id: item.id || NEW_ID });
     const isNew = isNewId(draft.id);
 
     setContent((prev) => {
@@ -187,41 +204,47 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     });
   }, [runPersist]);
 
-  const upsertGallery = useCallback(async (item: GalleryItem) => {
-    const draft = { ...item, id: item.id || NEW_ID };
-    const isNew = isNewId(draft.id);
+  const upsertGallery = useCallback(async (item: GalleryItem): Promise<GalleryItem> => {
+    const draftItem = { ...item, id: item.id || NEW_ID };
+    const isNew = isNewId(draftItem.id);
 
-    setContent((prev) => {
-      const exists = !isNew && prev.gallery.some((g) => g.id === draft.id);
-      const gallery = exists
-        ? prev.gallery.map((g) => (g.id === draft.id ? draft : g))
-        : [draft, ...prev.gallery];
-      const next = { ...prev, gallery };
-
-      if (isSupabaseConfigured()) {
-        void runPersist(async () => {
-          const saved = await persistGallery(draft);
-          setContent((p) => ({
-            ...p,
-            gallery: isNew
-              ? p.gallery.map((g) => (g.id === NEW_ID ? saved : g))
-              : p.gallery.map((g) => (g.id === saved.id ? saved : g)),
-          }));
-        });
-      } else {
-        const saved = isNew ? { ...draft, id: nextLocalId(prev.gallery) } : draft;
-        const local = {
-          ...next,
-          gallery: isNew
-            ? next.gallery.map((g) => (g.id === NEW_ID ? saved : g))
-            : next.gallery.map((g) => (g.id === saved.id ? saved : g)),
+    if (isSupabaseConfigured()) {
+      setSaving(true);
+      try {
+        const saved = await persistGallery(draftItem);
+        const full: GalleryItem = {
+          ...saved,
+          photoUrl: draftItem.photoUrl,
         };
-        persistLocalContent(local);
-        return local;
+        setContent((p) => ({
+          ...p,
+          gallery: p.gallery.some((g) => g.id === full.id)
+            ? p.gallery.map((g) => (g.id === full.id ? full : g))
+            : [full, ...p.gallery.filter((g) => g.id !== NEW_ID)],
+        }));
+        return full;
+      } catch (err) {
+        console.error("[ContentContext] persist failed", err);
+        alert("저장에 실패했습니다. 로그인 상태를 확인해 주세요.");
+        throw err;
+      } finally {
+        setSaving(false);
       }
+    }
+
+    let saved!: GalleryItem;
+    setContent((prev) => {
+      const exists = !isNew && prev.gallery.some((g) => g.id === draftItem.id);
+      saved = isNew ? { ...draftItem, id: nextLocalId(prev.gallery) } : draftItem;
+      const gallery = exists
+        ? prev.gallery.map((g) => (g.id === saved.id ? saved : g))
+        : [saved, ...prev.gallery.filter((g) => g.id !== NEW_ID)];
+      const next = { ...prev, gallery };
+      persistLocalContent(next);
       return next;
     });
-  }, [runPersist]);
+    return saved;
+  }, []);
 
   const deleteGallery = useCallback(async (id: number) => {
     setContent((prev) => {

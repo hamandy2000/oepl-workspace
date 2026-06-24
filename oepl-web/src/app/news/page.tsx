@@ -1,17 +1,16 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import Header from "@/components/Header";
 import FooterCTA from "@/components/FooterCTA";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useLang } from "@/contexts/LangContext";
 import { useContent } from "@/contexts/ContentContext";
-import { newsDisplay } from "@/lib/content/display";
+import { newsDisplay, sortNewsItems, latestNewsId } from "@/lib/content/display";
+import NewsNewBadge from "@/components/news/NewsNewBadge";
+import NewsPinnedBadge from "@/components/news/NewsPinnedBadge";
 
 const PER_PAGE = 10;
-
-function parseDate(date: string) {
-  return new Date(date.replace(/\./g, "-"));
-}
 
 function SortDropdown({
   sortOrder,
@@ -92,12 +91,17 @@ export default function NewsPage() {
   const [page, setPage] = useState(1);
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
 
-  const sorted = useMemo(() => {
-    return [...content.news].sort((a, b) => {
-      const diff = parseDate(b.date).getTime() - parseDate(a.date).getTime();
-      return sortOrder === "newest" ? diff : -diff;
-    });
-  }, [content.news, sortOrder]);
+  const latestId = useMemo(() => latestNewsId(content.news), [content.news]);
+
+  const sorted = useMemo(
+    () => sortNewsItems(content.news, sortOrder),
+    [content.news, sortOrder]
+  );
+
+  const nonPinnedSorted = useMemo(
+    () => sorted.filter((n) => !n.pinned),
+    [sorted]
+  );
 
   const totalPages = Math.ceil(sorted.length / PER_PAGE);
   const paginated = sorted.slice((page - 1) * PER_PAGE, page * PER_PAGE);
@@ -112,12 +116,14 @@ export default function NewsPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function rowNumber(indexOnPage: number) {
-    const absoluteIndex = (page - 1) * PER_PAGE + indexOnPage;
+  function rowNumber(item: (typeof paginated)[number]) {
+    if (item.pinned) return null;
+    const idx = nonPinnedSorted.findIndex((n) => n.id === item.id);
+    if (idx === -1) return null;
     if (sortOrder === "newest") {
-      return sorted.length - absoluteIndex;
+      return nonPinnedSorted.length - idx;
     }
-    return absoluteIndex + 1;
+    return idx + 1;
   }
 
   return (
@@ -153,20 +159,27 @@ export default function NewsPage() {
               {paginated.map((item, i) => {
                 const display = newsDisplay(item, lang);
                 return (
-                <article
+                <Link
                   key={item.id}
+                  href={`/news/${item.id}`}
                   className="group grid grid-cols-1 sm:grid-cols-[48px_1fr_96px] gap-2 sm:gap-4 px-4 py-5 border-b border-gray-100 last:border-b-0 cursor-pointer transition-colors hover:bg-[#fff8ef]/40"
                 >
-                  <span className="hidden sm:block text-xs text-[#9ca3af] font-mono pt-0.5 text-center">
-                    {rowNumber(i)}
+                  <span className="hidden sm:flex text-xs text-[#9ca3af] font-mono pt-0.5 text-center items-start justify-center">
+                    {item.pinned ? (
+                      <NewsPinnedBadge label={t.news.badgePinned} />
+                    ) : (
+                      rowNumber(item)
+                    )}
                   </span>
 
                   <div className="min-w-0">
-                    <div className="sm:hidden mb-1">
+                    <div className="sm:hidden mb-1 flex items-center gap-1.5">
+                      {item.pinned && <NewsPinnedBadge label={t.news.badgePinned} />}
                       <span className="text-[10px] text-[#9ca3af]">{display.date}</span>
                     </div>
-                    <h2 className="text-sm font-semibold text-[#080d1e] leading-snug group-hover:text-[#E88800] transition-colors">
-                      {display.title}
+                    <h2 className="text-sm font-semibold text-[#080d1e] leading-snug group-hover:text-[#E88800] transition-colors flex items-center gap-1.5 min-w-0">
+                      {item.id === latestId && <NewsNewBadge label={t.news.badgeNew} />}
+                      <span className="truncate">{display.title}</span>
                     </h2>
                     <p className="text-xs text-[#6b7280] leading-relaxed mt-1.5 line-clamp-2">
                       {display.detail}
@@ -176,7 +189,7 @@ export default function NewsPage() {
                   <time className="hidden sm:block text-xs text-[#9ca3af] text-center pt-0.5 flex-shrink-0">
                     {display.date}
                   </time>
-                </article>
+                </Link>
               );})}
             </div>
 
