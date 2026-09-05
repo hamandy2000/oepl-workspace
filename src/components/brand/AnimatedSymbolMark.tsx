@@ -1,5 +1,7 @@
 "use client";
 
+/** OEPL 심볼 마크 드로잉 애니메이션 */
+
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   parseSymbolSvg,

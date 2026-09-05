@@ -1,5 +1,7 @@
 "use client";
 
+/** 사이트 콘텐츠 전역 상태 Context — 조회·저장·삭제 */
+
 import {
   createContext,
   useCallback,

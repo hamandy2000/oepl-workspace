@@ -1,3 +1,5 @@
+/** 사이트 콘텐츠 도메인 타입 정의 */
+
 export type GalleryCategory = "Member" | "Conference" | "기타";
 
 export type PatentStatus = "registered" | "pending";

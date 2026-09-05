@@ -1,7 +1,10 @@
 "use client";
+
+/** Contact 페이지 — 연락처 표시 및 클릭 복사 (스타일: src/styles/contact.css) */
+
 import { useState, type ElementType, type ReactNode } from "react";
 import Header from "@/components/Header";
-import FooterCTA from "@/components/FooterCTA";
+import Footer from "@/components/Footer";
 import { useLang } from "@/contexts/LangContext";
 import { MapPin, Phone, Mail, ArrowRight } from "lucide-react";
 import PageBanner from "@/components/PageBanner";
@@ -43,11 +46,7 @@ function Copyable({
   }
 
   return (
-    <Tag
-      {...props}
-      onClick={handleCopy}
-      className={`cursor-pointer transition-colors hover:text-[#E88800] ${className}`}
-    >
+    <Tag {...props} onClick={handleCopy} className={`copyable ${className}`.trim()}>
       {children}
     </Tag>
   );
@@ -55,13 +54,7 @@ function Copyable({
 
 function CopiedBadge({ show, label }: { show: boolean; label: string }) {
   return (
-    <span
-      aria-hidden={!show}
-      className={`absolute left-full ml-1 top-1/2 -translate-y-1/2 text-2xs font-medium whitespace-nowrap pointer-events-none transition-opacity duration-200 ${
-        show ? "opacity-100" : "opacity-0"
-      }`}
-      style={{ color: "rgba(232, 136, 0, 0.45)" }}
-    >
+    <span aria-hidden={!show} className={show ? "copied-badge is-shown" : "copied-badge"}>
       {label}
     </span>
   );
@@ -78,39 +71,29 @@ export default function ContactPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-white">
-
+      <main className="page-main">
         <PageBanner title={c.banner} />
 
-        {/* Content */}
-        <section className="section-y">
-          <div className="max-w-7xl mx-auto px-6 flex flex-col gap-12">
-
-            {/* Title + description */}
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-[#E88800] mb-4 leading-tight">
-                {c.heading}
-              </h2>
-              <p className="text-sm text-[#6b7280] leading-relaxed max-w-lg">
+        <section className="contact-section section-y">
+          <div className="contact-wrapper">
+            <div className="contact-head-container">
+              <h2 className="contact-title">{c.heading}</h2>
+              <p className="contact-desc">
                 {lang === "KR"
                   ? "연구실 방문, 공동 연구, 학생 모집 등 궁금하신 사항이 있으시면 언제든지 연락해 주세요."
                   : "We'd love to hear from you. Whether you have questions about research, collaboration, or joining our lab, our team is here to help."}
               </p>
             </div>
 
-            {/* info row — address | phone | email */}
-            <div className="grid grid-cols-1 md:grid-cols-[auto_auto_auto] gap-10 md:gap-16 items-start w-full">
-
+            <div className="contact-info-container">
               {/* 주소 */}
-              <div className="min-w-0 w-full md:w-auto md:max-w-xs lg:max-w-sm xl:max-w-md">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#E88800]/10">
-                    <MapPin size={14} className="text-[#E88800]" />
+              <div className="info-item is-address">
+                <div className="info-head">
+                  <div className="icon-box">
+                    <MapPin size={14} />
                   </div>
-                  <span className="relative inline-flex items-center min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-widest text-[#9ca3af]">
-                      {c.addressLabel}
-                    </p>
+                  <span className="label-box">
+                    <p className="label">{c.addressLabel}</p>
                     <CopiedBadge show={addressCopy.copied} label={c.copySuccess} />
                   </span>
                 </div>
@@ -118,7 +101,7 @@ export default function ContactPage() {
                   as="p"
                   text={lang === "KR" ? c.address : fullAddressEn}
                   onCopied={addressCopy.notifyCopied}
-                  className="text-sm font-semibold text-[#080d1e] leading-relaxed break-words"
+                  className="value"
                 >
                   {lang === "KR" ? c.address : c.addressEn.split("\n")[0]}
                 </Copyable>
@@ -127,30 +110,36 @@ export default function ContactPage() {
                     as="p"
                     text={fullAddressEn}
                     onCopied={addressCopy.notifyCopied}
-                    className="text-xs text-[#9ca3af] mt-1 leading-relaxed break-words"
+                    className="value-sub"
                   >
                     {c.addressEn.split("\n").map((line, i, arr) => (
-                      <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+                      <span key={i}>
+                        {line}
+                        {i < arr.length - 1 && <br />}
+                      </span>
                     ))}
                   </Copyable>
                 ) : (
                   <>
-                    {c.addressEn.split("\n").slice(1).map((line, i) => (
-                      <Copyable
-                        key={i}
-                        as="p"
-                        text={fullAddressEn}
-                        onCopied={addressCopy.notifyCopied}
-                        className="text-sm font-semibold text-[#080d1e] leading-relaxed break-words"
-                      >
-                        {line}
-                      </Copyable>
-                    ))}
+                    {c.addressEn
+                      .split("\n")
+                      .slice(1)
+                      .map((line, i) => (
+                        <Copyable
+                          key={i}
+                          as="p"
+                          text={fullAddressEn}
+                          onCopied={addressCopy.notifyCopied}
+                          className="value"
+                        >
+                          {line}
+                        </Copyable>
+                      ))}
                     <Copyable
                       as="p"
                       text={c.address}
                       onCopied={addressCopy.notifyCopied}
-                      className="text-xs text-[#9ca3af] mt-1 leading-relaxed break-words"
+                      className="value-sub"
                     >
                       {c.address}
                     </Copyable>
@@ -159,25 +148,23 @@ export default function ContactPage() {
               </div>
 
               {/* 전화 */}
-              <div className="flex-shrink-0">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#E88800]/10">
-                    <Phone size={14} className="text-[#E88800]" />
+              <div className="info-item">
+                <div className="info-head">
+                  <div className="icon-box">
+                    <Phone size={14} />
                   </div>
-                  <span className="relative inline-flex items-center">
-                    <p className="text-xs font-semibold uppercase tracking-widest text-[#9ca3af]">
-                      {c.phoneLabel}
-                    </p>
+                  <span className="label-box">
+                    <p className="label">{c.phoneLabel}</p>
                     <CopiedBadge show={phoneCopy.copied} label={c.copySuccess} />
                   </span>
                 </div>
-                <div className="flex flex-col gap-1">
+                <div className="value-list">
                   <Copyable
                     as="a"
                     href="tel:+82522202547"
                     text="+82-52-220-2547"
                     onCopied={phoneCopy.notifyCopied}
-                    className="text-sm text-[#374151]"
+                    className="value-plain"
                   >
                     +82-52-220-2547 (office)
                   </Copyable>
@@ -186,7 +173,7 @@ export default function ContactPage() {
                     href="tel:+82522204610"
                     text="+82-52-220-4610"
                     onCopied={phoneCopy.notifyCopied}
-                    className="text-sm text-[#374151]"
+                    className="value-plain"
                   >
                     +82-52-220-4610 (lab)
                   </Copyable>
@@ -194,15 +181,13 @@ export default function ContactPage() {
               </div>
 
               {/* 이메일 */}
-              <div className="flex-shrink-0">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#E88800]/10">
-                    <Mail size={14} className="text-[#E88800]" />
+              <div className="info-item">
+                <div className="info-head">
+                  <div className="icon-box">
+                    <Mail size={14} />
                   </div>
-                  <span className="relative inline-flex items-center">
-                    <p className="text-xs font-semibold uppercase tracking-widest text-[#9ca3af]">
-                      {c.emailLabel}
-                    </p>
+                  <span className="label-box">
+                    <p className="label">{c.emailLabel}</p>
                     <CopiedBadge show={emailCopy.copied} label={c.copySuccess} />
                   </span>
                 </div>
@@ -211,22 +196,20 @@ export default function ContactPage() {
                   href="mailto:sucho@ulsan.ac.kr"
                   text="sucho@ulsan.ac.kr"
                   onCopied={emailCopy.notifyCopied}
-                  className="text-sm text-[#374151]"
+                  className="value-plain"
                 >
                   sucho@ulsan.ac.kr
                 </Copyable>
               </div>
-
             </div>
 
-            {/* Full-width map */}
-            <div className="relative rounded-2xl overflow-hidden border border-gray-100 shadow-sm" style={{ height: 420 }}>
+            <div className="contact-map-container">
               <iframe
                 title="OEPL Location"
                 src="https://maps.google.com/maps?q=울산대학교+자연과학대학&t=&z=16&ie=UTF8&iwloc=&output=embed"
                 width="100%"
                 height="100%"
-                style={{ border: 0, display: "block" }}
+                className="map"
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
@@ -235,18 +218,16 @@ export default function ContactPage() {
                 href="https://maps.google.com/?q=울산대학교+자연과학대학"
                 target="_blank"
                 rel="noreferrer"
-                className="absolute bottom-4 left-4 inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold bg-[#080d1e] text-white hover:bg-[#E88800] transition-colors shadow-lg"
+                className="map-link"
               >
                 {lang === "KR" ? "길찾기" : "Get Directions"}
                 <ArrowRight size={13} />
               </a>
             </div>
-
           </div>
         </section>
-
       </main>
-      <FooterCTA />
+      <Footer />
     </>
   );
 }

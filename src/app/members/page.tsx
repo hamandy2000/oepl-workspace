@@ -1,6 +1,9 @@
 "use client";
+
+/** Members 페이지 — 교수·연구원·대학원생·졸업생 목록 (스타일: src/styles/members.css) */
+
 import Header from "@/components/Header";
-import FooterCTA from "@/components/FooterCTA";
+import Footer from "@/components/Footer";
 import { Mail, BookOpen, FlaskConical, Briefcase } from "lucide-react";
 import { useLang } from "@/contexts/LangContext";
 import { useContent } from "@/contexts/ContentContext";
@@ -9,84 +12,78 @@ import type { MemberRecord } from "@/types/content";
 import PageBanner from "@/components/PageBanner";
 import type { Lang } from "@/i18n/translations";
 
-function MemberAvatar({
-  photoUrl,
-  lang,
-  className,
-}: {
-  photoUrl?: string;
-  lang: Lang;
-  className?: string;
-}) {
+function MemberAvatar({ photoUrl, lang }: { photoUrl?: string; lang: Lang }) {
   if (photoUrl) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img src={photoUrl} alt="" className={className ?? "w-full h-full object-cover"} />
-    );
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={photoUrl} alt="" className="member-photo" />;
   }
-  return <span className="text-2xs text-gray-400">{lang === "KR" ? "사진" : "Photo"}</span>;
+  return (
+    <span className="member-photo-placeholder">{lang === "KR" ? "사진" : "Photo"}</span>
+  );
 }
 
-function ResearcherCard({ r, lang, degreeMap }: {
+function ResearcherCard({
+  r,
+  lang,
+  degreeMap,
+}: {
   r: MemberRecord;
   lang: Lang;
   degreeMap: Record<string, string>;
 }) {
-  const field = r.research;
   return (
-    <div className="card-hover rounded-2xl bg-white border border-gray-100 p-2.5 sm:p-3 flex flex-col sm:flex-row gap-2.5 sm:gap-4 hover:border-[#E88800]/40">
-      <div className="flex-shrink-0 rounded-xl w-full sm:w-[140px] aspect-[5/6] sm:aspect-auto sm:h-[168px] flex items-center justify-center bg-gray-100 border border-gray-200 overflow-hidden">
+    <div className="researcher-card card-hover">
+      <div className="photo-box">
         <MemberAvatar photoUrl={r.photoUrl} lang={lang} />
       </div>
-      <div className="flex flex-col gap-1.5 sm:justify-between min-w-0 sm:py-3 flex-1">
-        <div className="flex flex-col gap-0.5 min-w-0">
-          <span className="font-bold text-sm sm:text-base text-[#080d1e] truncate">
-            {lang === "KR" ? r.nameKo : r.nameEn}
-          </span>
-          <span className="text-xs sm:text-sm text-[#9ca3af] truncate">
-            {lang === "KR" ? r.nameEn : r.nameKo}
-          </span>
+      <div className="member-body">
+        <div className="name-box">
+          <span className="name">{lang === "KR" ? r.nameKo : r.nameEn}</span>
+          <span className="name-sub">{lang === "KR" ? r.nameEn : r.nameKo}</span>
         </div>
-        <span className="text-2xs font-semibold px-2 py-0.5 rounded-full w-fit bg-[#E88800]/10 text-[#E88800] border border-[#E88800]/20">
-          {degreeMap[r.degree] ?? r.degree}
-        </span>
-        <div className="flex items-start gap-1.5 text-2xs sm:text-xs leading-normal text-[#6b7280] min-w-0">
-          <FlaskConical size={11} className="text-[#E88800] flex-shrink-0 mt-0.5" />
-          <span className="break-words min-w-0">{field}</span>
-        </div>
-        <div className="flex items-start gap-1.5 text-2xs sm:text-xs leading-tight text-[#9ca3af] min-w-0">
-          <Mail size={11} className="flex-shrink-0 mt-0.5" />
-          <span className="break-words min-w-0">{r.email}</span>
-        </div>
+        <span className="degree-tag">{degreeMap[r.degree] ?? r.degree}</span>
+        <p className="info-row">
+          <FlaskConical size={11} className="info-icon" />
+          <span className="info-text">{r.research}</span>
+        </p>
+        <p className="info-row is-email">
+          <Mail size={11} className="info-icon" />
+          <span className="info-text">{r.email}</span>
+        </p>
       </div>
     </div>
   );
 }
 
-function AlumniCard({ a, lang, degreeMap }: { a: MemberRecord; lang: Lang; degreeMap: Record<string, string> }) {
-  const degreeLabel = degreeMap[a.degree] ?? a.degree;
+function AlumniCard({
+  a,
+  lang,
+  degreeMap,
+}: {
+  a: MemberRecord;
+  lang: Lang;
+  degreeMap: Record<string, string>;
+}) {
   return (
-    <div className="card-hover rounded-xl bg-white border border-gray-100 px-3 py-3 sm:px-5 sm:py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 hover:border-[#E88800]/40">
-      <div className="min-w-0">
-        <div className="flex flex-col sm:flex-row sm:items-baseline gap-0.5 sm:gap-2 mb-0.5">
-          <span className="font-semibold text-sm sm:text-base text-[#080d1e] truncate">{lang === "KR" ? a.nameKo : a.nameEn}</span>
-          <span className="text-xs sm:text-sm text-[#9ca3af] truncate">{lang === "KR" ? a.nameEn : a.nameKo}</span>
+    <div className="alumni-card card-hover">
+      <div className="alumni-body">
+        <div className="name-row">
+          <span className="name">{lang === "KR" ? a.nameKo : a.nameEn}</span>
+          <span className="name-sub">{lang === "KR" ? a.nameEn : a.nameKo}</span>
         </div>
-        <span className="text-2xs sm:text-xs leading-tight text-[#6b7280]">{formatGraduationYear(a)}</span>
+        <span className="graduation">{formatGraduationYear(a)}</span>
       </div>
-      <span className="flex-shrink-0 self-start text-2xs font-semibold px-2 py-0.5 rounded-full bg-[#E88800]/10 text-[#E88800] border border-[#E88800]/20">
-        {degreeLabel}
-      </span>
+      <span className="degree-tag">{degreeMap[a.degree] ?? a.degree}</span>
     </div>
   );
 }
 
-function TimelineRow({ period, desc }: { period: string; desc: string }) {
+function CareerRow({ period, desc }: { period: string; desc: string }) {
   return (
-    <div className="flex items-start py-3 border-b border-gray-100 pl-9">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:gap-6 flex-1">
-        <span className="text-xs font-medium flex-shrink-0 w-36 text-[#E88800]">{period}</span>
-        <span className="text-sm text-[#6b7280]">{desc}</span>
+    <div className="career-row">
+      <div className="career-inner">
+        <span className="period">{period}</span>
+        <span className="desc">{desc}</span>
       </div>
     </div>
   );
@@ -99,59 +96,60 @@ export default function MembersPage() {
   const professor = content.members.professor;
   const { postdocs, gradStudents, phdAlumni, msAlumni } = groupMembersForDisplay(content.members);
   const affiliation = lang === "KR" ? professor.affiliationKr : professor.affiliationEn;
+
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-white">
-
+      <main className="page-main">
         <PageBanner title={m.banner} />
 
         {/* 교수 소개 */}
-        <section className="section-y bg-white border-b border-gray-100">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="mb-10">
-              <p className="section-label mb-1">{m.professorLabel}</p>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#080d1e]">{m.professorTitle}</h2>
+        <section id="professor" className="members-section section-anchor section-y">
+          <div className="section-wrapper">
+            <div className="page-head-container">
+              <p className="section-label">{m.professorLabel}</p>
+              <h2 className="section-title">{m.professorTitle}</h2>
             </div>
 
-            <div className="rounded-2xl border border-gray-100 p-8 grid grid-cols-1 md:grid-cols-2 gap-10">
-              <div className="rounded-xl aspect-[5/6] w-full max-w-[220px] sm:max-w-[260px] mx-auto md:max-w-none flex items-center justify-center bg-gray-100 border border-gray-200 overflow-hidden">
-                <MemberAvatar
-                  photoUrl={professor.photoUrl}
-                  lang={lang}
-                  className="w-full h-full object-cover"
-                />
+            <div className="professor-card">
+              <div className="photo-box">
+                <MemberAvatar photoUrl={professor.photoUrl} lang={lang} />
               </div>
-              <div className="flex flex-col gap-6">
+              <div className="professor-body">
                 <div>
-                  <p className="text-xs text-[#9ca3af] mb-1">{affiliation}</p>
-                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
-                    <h3 className="text-2xl font-bold text-[#080d1e]">{lang === "KR" ? professor.nameKo : professor.nameEn}</h3>
-                    <span className="text-base text-[#9ca3af]">{lang === "KR" ? professor.nameEn : professor.nameKo}</span>
+                  <p className="affiliation">{affiliation}</p>
+                  <div className="name-row">
+                    <h3 className="name">{lang === "KR" ? professor.nameKo : professor.nameEn}</h3>
+                    <span className="name-sub">
+                      {lang === "KR" ? professor.nameEn : professor.nameKo}
+                    </span>
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-4">
-                  <a href={professor.scholar} target="_blank" rel="noreferrer"
-                    className="inline-flex items-center gap-2 text-xs text-[#6b7280] hover:text-[#E88800] transition-colors">
-                    <BookOpen size={14} className="text-[#E88800]" />
+
+                <div className="link-container">
+                  <a href={professor.scholar} target="_blank" rel="noreferrer" className="link">
+                    <BookOpen size={14} className="link-icon" />
                     Google Scholar
                   </a>
-                  <a href={`mailto:${professor.email}`}
-                    className="inline-flex items-center gap-2 text-xs text-[#6b7280] hover:text-[#E88800] transition-colors">
-                    <Mail size={14} className="text-[#E88800]" />
+                  <a href={`mailto:${professor.email}`} className="link">
+                    <Mail size={14} className="link-icon" />
                     {professor.email}
                   </a>
                 </div>
 
                 <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#E88800]/10 text-[#E88800]">
+                  <div className="career-head">
+                    <div className="icon-box">
                       <Briefcase size={14} />
                     </div>
-                    <p className="text-xs font-semibold uppercase tracking-widest text-[#9ca3af]">{m.careerLabel}</p>
+                    <p className="career-label">{m.careerLabel}</p>
                   </div>
                   {professor.career.map((c) => (
-                    <TimelineRow key={c.id} period={c.period} desc={lang === "KR" ? c.textKr : c.textEn} />
+                    <CareerRow
+                      key={c.id}
+                      period={c.period}
+                      desc={lang === "KR" ? c.textKr : c.textEn}
+                    />
                   ))}
                 </div>
               </div>
@@ -160,13 +158,13 @@ export default function MembersPage() {
         </section>
 
         {/* 박사후연구원 */}
-        <section className="section-y bg-gray-50 border-b border-gray-100">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="mb-10">
-              <p className="section-label mb-1">{m.postdocLabel}</p>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#080d1e]">{m.postdocTitle}</h2>
+        <section id="researchers" className="members-section is-alt section-anchor section-y">
+          <div className="section-wrapper">
+            <div className="page-head-container">
+              <p className="section-label">{m.postdocLabel}</p>
+              <h2 className="section-title">{m.postdocTitle}</h2>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+            <div className="member-list-container">
               {postdocs.map((r) => (
                 <ResearcherCard key={r.id} r={r} lang={lang} degreeMap={m.degreeMap} />
               ))}
@@ -175,13 +173,13 @@ export default function MembersPage() {
         </section>
 
         {/* 대학원생 */}
-        <section className="section-y bg-white border-b border-gray-100">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="mb-10">
-              <p className="section-label mb-1">{m.gradLabel}</p>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#080d1e]">{m.gradTitle}</h2>
+        <section className="members-section section-y">
+          <div className="section-wrapper">
+            <div className="page-head-container">
+              <p className="section-label">{m.gradLabel}</p>
+              <h2 className="section-title">{m.gradTitle}</h2>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+            <div className="member-list-container">
               {gradStudents.map((r) => (
                 <ResearcherCard key={r.id} r={r} lang={lang} degreeMap={m.degreeMap} />
               ))}
@@ -190,13 +188,13 @@ export default function MembersPage() {
         </section>
 
         {/* 졸업생 — Ph.D */}
-        <section className="section-y bg-gray-50 border-b border-gray-100">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="mb-10">
-              <p className="section-label mb-1">{m.phdAlumniLabel}</p>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#080d1e]">{m.phdAlumniTitle}</h2>
+        <section className="members-section is-alt section-y">
+          <div className="section-wrapper">
+            <div className="page-head-container">
+              <p className="section-label">{m.phdAlumniLabel}</p>
+              <h2 className="section-title">{m.phdAlumniTitle}</h2>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            <div className="alumni-list-container">
               {phdAlumni.map((a) => (
                 <AlumniCard key={a.id} a={a} lang={lang} degreeMap={m.degreeMap} />
               ))}
@@ -205,22 +203,21 @@ export default function MembersPage() {
         </section>
 
         {/* 졸업생 — M.S */}
-        <section className="section-y bg-white">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="mb-10">
-              <p className="section-label mb-1">{m.msAlumniLabel}</p>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#080d1e]">{m.msAlumniTitle}</h2>
+        <section className="members-section is-last section-y">
+          <div className="section-wrapper">
+            <div className="page-head-container">
+              <p className="section-label">{m.msAlumniLabel}</p>
+              <h2 className="section-title">{m.msAlumniTitle}</h2>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            <div className="alumni-list-container">
               {msAlumni.map((a) => (
                 <AlumniCard key={a.id} a={a} lang={lang} degreeMap={m.degreeMap} />
               ))}
             </div>
           </div>
         </section>
-
       </main>
-      <FooterCTA />
+      <Footer />
     </>
   );
 }

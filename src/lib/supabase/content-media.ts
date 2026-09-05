@@ -1,3 +1,5 @@
+/** 클라이언트 측 스토리지 업로드/삭제 및 파일 검증 */
+
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import {
   readMemberPhotoPreview,

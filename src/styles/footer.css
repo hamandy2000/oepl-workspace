@@ -1,0 +1,176 @@
+/* 푸터 — src/components/Footer.tsx
+ *
+ *   .footer                         화면 폭 전체 (배경)
+ *     .footer-main / .footer-bottom 가로 밴드 (상단 테두리)
+ *       .footer-wrapper             폭 제한·정렬
+ *         .footer-*-container       역할별 영역
+ *           세부 요소               짧게 쓰고 자손 선택자로 범위를 나눈다
+ */
+
+.footer {
+  background-color: var(--color-bg);
+}
+
+.footer-main,
+.footer-bottom {
+  border-top: 1px solid var(--color-border);
+}
+
+.footer-wrapper {
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+.footer-main .footer-wrapper {
+  padding-block: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.footer-bottom .footer-wrapper {
+  padding-block: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--text-xs);
+  color: var(--color-subtle);
+}
+
+/* ============================================================
+   INFO — 로고 + 주소·전화·이메일
+   ============================================================ */
+
+.footer-info-container {
+  flex-shrink: 0;
+  max-width: 100%;
+}
+
+.footer-info-container .footer-logo {
+  height: 2rem;
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 1.25rem;
+  filter: brightness(0) invert(1);
+}
+
+.footer-info-container .info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  font-size: var(--text-xs);
+  font-style: normal;
+  color: var(--color-muted);
+}
+
+.footer-info-container .info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-info-container .info-item.is-address {
+  align-items: flex-start;
+}
+
+.footer-info-container .info-icon {
+  flex-shrink: 0;
+  color: var(--color-brand);
+}
+
+.footer-info-container .info-item.is-address .info-icon {
+  margin-top: 0.125rem;
+}
+
+.footer-info-container .info-sub {
+  color: var(--color-subtle);
+}
+
+.footer-info-container .info-link {
+  transition: color 150ms;
+}
+
+.footer-info-container .info-link:hover {
+  color: var(--color-brand);
+}
+
+/* 주소는 모바일과 데스크톱에서 표기가 다르다 */
+.footer-info-container .address-mobile {
+  line-height: 1.5;
+}
+
+.footer-info-container .address-desktop {
+  display: none;
+}
+
+/* ============================================================
+   LINKS — 메뉴 컬럼
+   ============================================================ */
+
+.footer-link-container {
+  display: flex;
+  flex: 1 1 0%;
+  justify-content: space-around;
+}
+
+.footer-link-container .link-list {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.footer-link-container .link {
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  transition: color 150ms;
+}
+
+.footer-link-container .link:hover {
+  color: var(--color-text);
+}
+
+/* ============================================================
+   BOTTOM — 저작권·사업자번호
+   ============================================================ */
+
+.footer-bottom .copyright {
+  text-align: center;
+}
+
+.footer-bottom .biz-num {
+  font-size: var(--text-2xs);
+}
+
+/* ============================================================
+   BREAKPOINTS
+   ============================================================ */
+
+@media (min-width: 48rem) {
+  .footer-main .footer-wrapper {
+    flex-direction: row;
+  }
+
+  .footer-info-container {
+    max-width: 20rem;
+  }
+
+  .footer-info-container .address-mobile {
+    display: none;
+  }
+
+  .footer-info-container .address-desktop {
+    display: inline;
+  }
+
+  .footer-bottom .footer-wrapper {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .footer-bottom .copyright {
+    text-align: left;
+  }
+}

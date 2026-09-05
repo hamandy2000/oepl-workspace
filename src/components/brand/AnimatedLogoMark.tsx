@@ -1,5 +1,7 @@
 "use client";
 
+/** OEPL 타이포 로고 드로잉 애니메이션 */
+
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import {
   fetchLogoMark,

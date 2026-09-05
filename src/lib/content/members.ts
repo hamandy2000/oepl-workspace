@@ -1,3 +1,5 @@
+/** 멤버 학위·그룹·졸업 정보 정규화 헬퍼 */
+
 import type { AlumniMember, MemberGroup, MemberRecord, MembersData, ResearcherMember } from "@/types/content";
 import { flattenMembers, isResearcherGroup, memberRecordFromRow } from "@/lib/data/mappers";
 

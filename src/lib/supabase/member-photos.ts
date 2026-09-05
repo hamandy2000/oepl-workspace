@@ -1,3 +1,5 @@
+/** 멤버·교수 사진 업로드·삭제·검증 */
+
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 import { MEMBER_PHOTOS_BUCKET, PHOTO_MAX_BYTES, PHOTO_MAX_MB } from "@/lib/supabase/content-media-constants";

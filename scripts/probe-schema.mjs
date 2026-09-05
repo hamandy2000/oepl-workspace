@@ -1,3 +1,5 @@
+/** Supabase 테이블 스키마(컬럼 구성) 점검 스크립트 — node scripts/probe-schema.mjs */
+
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 

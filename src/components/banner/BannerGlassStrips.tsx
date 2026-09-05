@@ -1,31 +1,9 @@
+/** 배너 유리 스트립 장식 — 히어로/페이지 배너 공용 (스타일: src/styles/glass-strips.css) */
+
 export const GLASS_STRIP_COUNT_MOBILE = 10;
 export const GLASS_STRIP_COUNT_DESKTOP = 18;
 
-/** Figma Frame 175 — per-column glass (gradient + backdrop blur on each strip) */
-export const glassStripStyle = {
-  background:
-    "linear-gradient(-90deg, rgba(255,255,255,0.008) 20%, rgba(40,40,40,0.093) 75.758%, rgba(255,255,255,0.008) 123.64%)",
-  backdropFilter: "blur(90px)",
-  WebkitBackdropFilter: "blur(90px)",
-} as const;
-
-/** Figma Frame 179 — page banner glass (last stop 0.002) */
-export const pageBannerGlassStripStyle = {
-  background:
-    "linear-gradient(-90deg, rgba(255,255,255,0.008) 20%, rgba(40,40,40,0.093) 75.758%, rgba(255,255,255,0.002) 123.64%)",
-  backdropFilter: "blur(90px)",
-  WebkitBackdropFilter: "blur(90px)",
-} as const;
-
-type GlassStripStyle = typeof glassStripStyle | typeof pageBannerGlassStripStyle;
-
-function GlassStripRow({
-  count,
-  stripStyle,
-}: {
-  count: number;
-  stripStyle: GlassStripStyle;
-}) {
+function GlassStripRow({ count }: { count: number }) {
   const stripWidth = 100 / count;
 
   return (
@@ -33,11 +11,11 @@ function GlassStripRow({
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="h-full shrink-0"
+          className="strip"
+          // 개수에 따라 폭이 달라지므로 계산 값만 인라인으로 둔다
           style={{
             width: `calc(${stripWidth}% + 1px)`,
             marginRight: i < count - 1 ? -1 : 0,
-            ...stripStyle,
           }}
           aria-hidden
         />
@@ -47,28 +25,19 @@ function GlassStripRow({
 }
 
 export default function BannerGlassStrips({
-  className,
   variant = "hero",
 }: {
-  className?: string;
   variant?: "hero" | "page";
 }) {
-  const stripStyle =
-    variant === "page" ? pageBannerGlassStripStyle : glassStripStyle;
+  const base = variant === "page" ? "glass-strips is-page" : "glass-strips";
 
   return (
     <>
-      <div
-        className={`absolute inset-0 flex pointer-events-none md:hidden ${className ?? ""}`}
-        aria-hidden
-      >
-        <GlassStripRow count={GLASS_STRIP_COUNT_MOBILE} stripStyle={stripStyle} />
+      <div className={`${base} is-mobile`} aria-hidden>
+        <GlassStripRow count={GLASS_STRIP_COUNT_MOBILE} />
       </div>
-      <div
-        className={`absolute inset-0 hidden md:flex pointer-events-none ${className ?? ""}`}
-        aria-hidden
-      >
-        <GlassStripRow count={GLASS_STRIP_COUNT_DESKTOP} stripStyle={stripStyle} />
+      <div className={`${base} is-desktop`} aria-hidden>
+        <GlassStripRow count={GLASS_STRIP_COUNT_DESKTOP} />
       </div>
     </>
   );

@@ -1,3 +1,5 @@
+/** 사이트 콘텐츠 조회·저장 — Supabase 연동 및 로컬 폴백 */
+
 import type {
 
   GalleryItem,

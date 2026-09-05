@@ -1,5 +1,7 @@
 "use client";
 
+/** 관리자 특허 관리 — 특허 목록 CRUD */
+
 import { useMemo, useState } from "react";
 import { useLang } from "@/contexts/LangContext";
 import { useContent } from "@/contexts/ContentContext";

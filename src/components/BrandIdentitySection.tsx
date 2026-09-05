@@ -1,5 +1,7 @@
 "use client";
 
+/** 브랜드 아이덴티티 섹션 — 심볼/로고/시그니처/컬러 탭 (스타일: src/styles/brand.css) */
+
 import { useState } from "react";
 import { Download } from "lucide-react";
 import { useLang } from "@/contexts/LangContext";
@@ -37,55 +39,48 @@ export default function BrandIdentitySection() {
   const active = panels[tab];
 
   return (
-    <section id="brand" className="section-y bg-white border-b border-[var(--color-neutral-100)]">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="mb-10">
-          <p className="section-label mb-1">{b.label}</p>
-          <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-neutral-900)]">{b.sectionTitle}</h2>
+    <section id="brand" className="brand-section section-y">
+      <div className="section-wrapper">
+        <div className="section-head-container">
+          <div>
+            <p className="section-label">{b.label}</p>
+            <h2 className="section-title">{b.sectionTitle}</h2>
+          </div>
         </div>
 
-        <div className="flex flex-wrap gap-0 border border-[var(--color-neutral-200)] rounded-t-xl overflow-hidden mb-0">
+        <div className="brand-tab-container">
           {tabs.map(({ id, label }) => (
             <button
               key={id}
               type="button"
               onClick={() => setTab(id)}
-              className={`flex-1 min-w-[100px] px-3 py-3 text-sm font-semibold transition-colors border-r border-[var(--color-neutral-200)] last:border-r-0 ${
-                tab === id
-                  ? "bg-[var(--color-brand)] text-[var(--color-neutral-0)]"
-                  : "bg-white text-[var(--color-neutral-700)] hover:bg-[var(--color-neutral-50)]"
-              }`}
+              className={tab === id ? "tab-btn is-active" : "tab-btn"}
             >
               {label}
             </button>
           ))}
         </div>
 
-        <div className="border border-t-0 border-[var(--color-neutral-200)] rounded-b-xl overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-0">
-            <div className="p-6 md:p-8 md:border-r border-b md:border-b-0 border-[var(--color-neutral-200)]">
-              <p className="text-sm font-medium text-[var(--color-brand)] mb-1">{active.enTitle}</p>
-              <h3 className="text-xl md:text-2xl font-bold text-[var(--color-neutral-900)] mb-4">{active.krTitle}</h3>
-              <div className="space-y-4 text-sm leading-relaxed text-[var(--color-neutral-500)] mb-2">
+        <div className="brand-panel-container">
+          <div className="panel-grid">
+            <div className="brand-text-container">
+              <p className="en-title">{active.enTitle}</p>
+              <h3 className="kr-title">{active.krTitle}</h3>
+              <div className="desc-list">
                 {active.paragraphs.map((p, i) => (
                   <p key={i}>{p}</p>
                 ))}
               </div>
 
               {tab !== "colors" && (
-                <div className="mt-6 flex flex-wrap gap-3">
+                <div className="brand-download-container">
                   {(
                     [
                       { label: b.downloadPng, href: active.assets.png, key: "png" },
                       { label: b.downloadAi, href: b.aiDownload, key: "ai" },
                     ] as const
                   ).map((dl) => (
-                    <a
-                      key={dl.key}
-                      href={dl.href}
-                      download
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md border border-[var(--color-neutral-200)] bg-white text-sm font-medium text-[var(--color-neutral-700)] hover:border-[color-mix(in_srgb,var(--color-brand)_50%,transparent)] hover:text-[var(--color-brand)] transition-colors"
-                    >
+                    <a key={dl.key} href={dl.href} download className="download-btn">
                       {dl.label}
                       <Download size={16} />
                     </a>
@@ -94,18 +89,18 @@ export default function BrandIdentitySection() {
               )}
 
               {tab === "colors" && (
-                <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6">
+                <div className="brand-color-list-container">
                   {brandPalette.map((item) => (
-                    <div key={item.id} className="flex items-start gap-3">
+                    <div key={item.id} className="color-item">
                       <div
-                        className="w-10 h-10 rounded-lg border border-[var(--color-neutral-200)] shrink-0"
+                        className="swatch"
                         style={{ background: brandColorStyle(item.cssVar) }}
                       />
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold text-[var(--color-neutral-900)] leading-snug">
+                      <div className="color-text">
+                        <p className="color-name">
                           {lang === "KR" ? item.name.kr : item.name.en}
                         </p>
-                        <p className="text-xs font-mono text-[var(--color-neutral-500)]">{item.hex}</p>
+                        <p className="color-hex">{item.hex}</p>
                       </div>
                     </div>
                   ))}
@@ -113,22 +108,16 @@ export default function BrandIdentitySection() {
               )}
             </div>
 
-            <div className="p-6 md:p-8 flex flex-col items-center justify-center bg-[var(--color-neutral-50)]">
+            <div className="brand-preview-container">
               {tab === "colors" ? (
-                <div className="w-full max-w-full md:max-w-xs grid grid-cols-2 gap-2 md:gap-3">
+                <div className="brand-swatch-grid-container">
                   {brandPalette.map((item) => (
                     <div
                       key={item.id}
-                      className="rounded-xl aspect-square flex items-end p-2 md:p-3 border border-black/5"
+                      className="swatch-box"
                       style={{ background: brandColorStyle(item.cssVar) }}
                     >
-                      <span
-                        className="text-2xs md:text-xs font-mono font-semibold px-1.5 py-0.5 md:px-2 md:py-1 rounded"
-                        style={{
-                          background: item.lightLabel ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.06)",
-                          color: item.lightLabel ? "#fff" : "var(--color-neutral-700)",
-                        }}
-                      >
+                      <span className={item.lightLabel ? "swatch-hex is-light" : "swatch-hex"}>
                         {item.hex}
                       </span>
                     </div>

@@ -1,3 +1,5 @@
+/** 클라이언트용 관리자 API 래퍼 — /api/admin 라우트 호출 */
+
 import type { AdminContentAction } from "@/lib/data/repository-admin";
 import type { NewsMediaDraft } from "@/lib/data/media-sync";
 

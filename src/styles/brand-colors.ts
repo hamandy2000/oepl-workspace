@@ -1,31 +1,26 @@
-import tokens from "@/styles/tokens.json";
+/** 브랜드 컬러 팔레트 — CI 소개에 표시할 목록 (globals.css @theme 과 동기화할 것) */
 
 export type BrandColorToken = {
   id: string;
-  token: string;
   cssVar: string;
   hex: string;
   lightLabel: boolean;
   name: { kr: string; en: string };
 };
 
-const c = tokens.color;
-
-/** CI 소개에 표시할 브랜드 팔레트 — tokens.json / globals.css @theme 과 동기화 */
+/** 스와치 색은 cssVar 로 칠하고, hex 는 그 아래 라벨로만 표시한다. */
 export const brandPalette: BrandColorToken[] = [
   {
     id: "brand",
-    token: "color.amber.500",
     cssVar: "--color-brand",
-    hex: c.amber["500"].$value,
+    hex: "#E88800",
     lightLabel: true,
     name: { kr: "Brand Amber", en: "Brand Amber" },
   },
   {
     id: "bg",
-    token: "color.neutral.900",
     cssVar: "--color-neutral-900",
-    hex: c.neutral["900"].$value,
+    hex: "#1A1A1A",
     lightLabel: true,
     name: { kr: "Neutral 900", en: "Neutral 900" },
   },

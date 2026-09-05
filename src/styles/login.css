@@ -1,0 +1,104 @@
+/* 관리자 로그인 페이지 — src/app/login/page.tsx */
+
+.login-wrapper {
+  max-width: 28rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+.login-head-container {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.login-head-container .login-title {
+  margin-bottom: 0.5rem;
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
+  color: #080d1e;
+}
+
+.login-head-container .login-desc {
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: #6b7280;
+}
+
+/* ============================================================
+   FORM
+   ============================================================ */
+
+.login-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 2rem;
+  border: 1px solid oklch(96.7% 0.003 264.542); /* gray-100 */
+  border-radius: var(--radius-lg);
+  background: #ffffff;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.login-form-container .error {
+  padding: 0.75rem 1rem;
+  border: 1px solid oklch(93.6% 0.032 17.717); /* red-100 */
+  border-radius: 0.75rem;
+  background: oklch(97.1% 0.013 17.38); /* red-50 */
+  color: oklch(57.7% 0.245 27.325); /* red-600 */
+  font-size: var(--text-xs);
+}
+
+.login-form-container .field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.login-form-container .label {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  color: #374151;
+}
+
+.login-form-container .input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid oklch(92.8% 0.006 264.531); /* gray-200 */
+  border-radius: 0.75rem;
+  font-size: var(--text-sm);
+  color: #080d1e;
+  outline: none;
+  transition: border-color 150ms, box-shadow 150ms;
+}
+
+.login-form-container .input::placeholder {
+  color: #9ca3af;
+}
+
+.login-form-container .input:focus {
+  border-color: color-mix(in srgb, var(--color-brand) 60%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-brand) 10%, transparent);
+}
+
+.login-form-container .submit-btn {
+  margin-top: 0.5rem;
+}
+
+/* ============================================================
+   FOOT
+   ============================================================ */
+
+.login-foot {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: var(--text-xs);
+  color: #9ca3af;
+}
+
+.login-foot .back-link {
+  transition: color 150ms;
+}
+
+.login-foot .back-link:hover {
+  color: var(--color-brand);
+}

@@ -1,3 +1,5 @@
+/** 서비스 롤 기반 콘텐츠 저장/삭제 (API 라우트 전용) */
+
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
   GalleryItem,

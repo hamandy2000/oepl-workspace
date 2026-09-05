@@ -1,5 +1,7 @@
 "use client";
 
+/** 관리자 대시보드 — 관리 항목 카드 목록 */
+
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import { BookOpen, FileText, Images, LayoutDashboard, Newspaper, Users } from "lucide-react";

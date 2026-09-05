@@ -1,71 +1,47 @@
 "use client";
+
+/** 홈 연구실 소개 섹션 (스타일: src/styles/intro.css) */
+
 import { useLang } from "@/contexts/LangContext";
 
 export default function IntroSection() {
   const { t } = useLang();
 
   return (
-    <section id="about" className="bg-white section-y">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
-          <div>
-            <div className="mb-10">
-              <p className="section-label mb-1">{t.intro.label}</p>
-              <h2 className="text-[clamp(1.125rem,4.6vw,1.875rem)] font-bold text-[#080d1e] mb-4 leading-snug">
+    <section id="about" className="intro-section section-y">
+      <div className="section-wrapper">
+        <div className="intro-content-container">
+          <div className="intro-text-container">
+            <div className="intro-head">
+              <p className="section-label">{t.intro.label}</p>
+              <h2 className="intro-title">
                 {t.intro.title.split("\n").map((line, i) => (
-                  <span
-                    key={i}
-                    className={i > 0 ? "block whitespace-nowrap" : "block"}
-                  >
+                  <span key={i} className="line">
                     {line}
                   </span>
                 ))}
               </h2>
             </div>
 
-            <div>
-              <p className="text-lg text-[#E88800] font-medium mb-6 leading-snug">
-                {t.intro.tagline}
-              </p>
-              <div className="space-y-4 text-[#6b7280] text-sm leading-relaxed">
-                {[t.intro.p1, t.intro.p2, t.intro.p3]
-                  .filter(Boolean)
-                  .map((paragraph, i) => (
-                    <p key={i}>{paragraph}</p>
-                  ))}
-              </div>
+            <p className="tagline">{t.intro.tagline}</p>
+            <div className="desc-list">
+              {[t.intro.p1, t.intro.p2, t.intro.p3].filter(Boolean).map((paragraph, i) => (
+                <p key={i}>{paragraph}</p>
+              ))}
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href="/about"
-                className="inline-flex items-center gap-2 rounded-full text-sm font-medium transition-colors"
-                style={{
-                  padding: "var(--spacing-300) var(--spacing-600)",
-                  background: "var(--color-brand)",
-                  color: "#ffffff",
-                  borderRadius: "var(--radius-pill)",
-                }}
-              >
+            <div className="intro-btn-container">
+              <a href="/about" className="btn-primary">
                 {t.intro.btn1}
               </a>
-              <a
-                href="/members"
-                className="inline-flex items-center gap-2 rounded-full text-sm font-medium transition-all hover:text-[var(--color-neutral-900)]"
-                style={{
-                  padding: "var(--spacing-300) var(--spacing-600)",
-                  border: "1px solid var(--color-neutral-200)",
-                  color: "var(--color-neutral-500)",
-                  borderRadius: "var(--radius-pill)",
-                }}
-              >
+              <a href="/members" className="btn-line">
                 {t.intro.btn2}
               </a>
             </div>
           </div>
 
-          <div className="rounded-2xl w-full min-h-[280px] sm:min-h-[320px] md:min-h-[420px] flex items-center justify-center bg-gray-100 border border-gray-200 overflow-hidden">
-            <span className="text-xs md:text-sm text-gray-400">{t.about.profPhoto}</span>
+          <div className="intro-photo-container">
+            <span className="placeholder">{t.about.profPhoto}</span>
           </div>
         </div>
       </div>

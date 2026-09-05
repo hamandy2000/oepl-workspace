@@ -1,3 +1,5 @@
+/** 서버 측 스토리지 업로드/삭제 (뉴스·갤러리·멤버 파일) */
+
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   NEWS_FILES_BUCKET,

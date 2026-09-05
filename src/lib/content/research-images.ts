@@ -1,4 +1,5 @@
-/** Static cover images for research area cards (tag → public path) */
+/** 연구 분야 커버 이미지 매핑 — 태그 → public 경로 */
+
 export const RESEARCH_AREA_IMAGES: Partial<Record<string, string>> = {
   OSCs: "/research/oscs.png",
   PSCs: "/research/pscs.png",

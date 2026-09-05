@@ -1,3 +1,5 @@
+/** 뉴스 조회수 증가 처리 */
+
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 /** Increments news view_count in Supabase; returns new count or null on failure / offline. */

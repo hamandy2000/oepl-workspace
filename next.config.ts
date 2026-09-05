@@ -1,3 +1,5 @@
+/** Next.js 설정 — Turbopack root, 프록시 요청 본문 크기 */
+
 import type { NextConfig } from "next";
 import path from "node:path";
 

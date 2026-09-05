@@ -1,0 +1,74 @@
+/* 404 페이지 — src/app/not-found.tsx */
+
+.notfound-main {
+  display: flex;
+  min-height: calc(100vh - 4rem);
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1.5rem 5rem;
+  background: #f9fafb;
+}
+
+.notfound-container {
+  width: 100%;
+  max-width: 32rem;
+  text-align: center;
+}
+
+.notfound-container .code {
+  margin-bottom: 1rem;
+  font-size: 4.5rem;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  color: color-mix(in srgb, var(--color-brand) 20%, transparent);
+}
+
+.notfound-container .notfound-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
+  color: #080d1e;
+}
+
+.notfound-container .title-en {
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-regular);
+  color: #9ca3af;
+}
+
+.notfound-container .desc {
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: #6b7280;
+}
+
+.notfound-container .desc-en {
+  margin-top: 0.5rem;
+  font-size: var(--text-xs);
+  line-height: var(--leading-relaxed);
+  color: #9ca3af;
+}
+
+.notfound-container .home-btn {
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+@media (min-width: 40rem) {
+  .notfound-container .code {
+    font-size: 6rem;
+  }
+
+  .notfound-container .notfound-title {
+    font-size: var(--text-3xl);
+  }
+
+  .notfound-container .title-en {
+    font-size: var(--text-lg);
+  }
+}

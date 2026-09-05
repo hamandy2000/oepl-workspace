@@ -1,3 +1,5 @@
+/** 관리자 세션 토큰 — 서명·검증 및 쿠키 옵션 */
+
 import crypto from "node:crypto";
 import { ADMIN_IDLE_TIMEOUT_MS } from "@/lib/supabase/security";
 

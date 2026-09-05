@@ -1,4 +1,7 @@
 "use client";
+
+/** 언어(KR/EN) Context — localStorage에 선택 유지 */
+
 import {
   createContext,
   useCallback,
@@ -37,6 +40,12 @@ export function LangProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setLangState(readStoredLang());
   }, []);
+
+  // 본문 언어를 <html lang>에 반영 — 스크린리더 발음·브라우저 번역 판단용.
+  // 기본값(영문)은 DEFAULT_LANG이 담당하므로 여기서는 전환만 따라간다.
+  useEffect(() => {
+    document.documentElement.lang = lang === "KR" ? "ko" : "en";
+  }, [lang]);
 
   const setLang = useCallback((next: Lang) => {
     setLangState(next);

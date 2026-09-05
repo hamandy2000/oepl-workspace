@@ -1,0 +1,186 @@
+/* 논문 — 홈 대표 논문 섹션과 논문 카드
+ *   src/components/PublicationsSection.tsx
+ *   src/components/publications/PublicationCard.tsx
+ */
+
+.publication-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ============================================================
+   CARD
+   ============================================================ */
+
+.publication-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid oklch(96.7% 0.003 264.542); /* gray-100 */
+  border-radius: var(--radius-lg);
+  background: #ffffff;
+  transition: border-color 150ms;
+}
+
+.publication-card:hover {
+  border-color: color-mix(in srgb, var(--color-brand) 40%, transparent);
+}
+
+.publication-card .card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.publication-card .meta-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.publication-card .journal {
+  padding: 0.125rem 0.5rem;
+  border: 1px solid rgba(232, 136, 0, 0.25);
+  border-radius: var(--radius-pill);
+  background: rgba(232, 136, 0, 0.1);
+  color: var(--color-brand);
+  font-size: var(--text-2xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.publication-card .date {
+  font-size: var(--text-2xs);
+  font-weight: var(--font-weight-medium);
+  color: #9ca3af;
+}
+
+.publication-card .doi-link {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: var(--text-xs);
+  color: #9ca3af;
+  transition: color 150ms;
+}
+
+.publication-card .doi-link:hover {
+  color: var(--color-brand);
+}
+
+.publication-card .card-title {
+  /* 토큰 단계(13/16px) 사이 값이라 직접 지정한다 */
+  font-size: 15px;
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-snug);
+  color: #080d1e;
+  transition: color 150ms;
+}
+
+.publication-card:hover .card-title {
+  color: var(--color-brand);
+}
+
+.publication-card .authors {
+  font-size: var(--text-xs);
+  color: #6b7280;
+}
+
+.publication-card .doi {
+  display: inline-block;
+  margin-top: 0.125rem;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-brand);
+}
+
+a.publication-card .doi:hover,
+.publication-card a.doi:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================
+   PAGE — 논문 목록 페이지 (src/app/publication/page.tsx)
+   ============================================================ */
+
+.publication-wrapper {
+  max-width: 64rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+.publication-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
+/* 연도 버튼 — 넘치면 가로로 스크롤한다 */
+.publication-filter-container .year-box {
+  position: relative;
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.publication-filter-container .year-scroll {
+  overflow-x: auto;
+}
+
+.publication-filter-container .year-list {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: max-content;
+  padding-inline: 0.25rem;
+}
+
+/* 스크롤 여지가 있을 때 양 끝을 흰색으로 흐리고 버튼을 얹는다 */
+.publication-filter-container .scroll-fade {
+  position: absolute;
+  inset-block: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  width: 48px;
+  pointer-events: none;
+}
+
+.publication-filter-container .scroll-fade.is-left {
+  left: 0;
+  background: linear-gradient(to left, transparent, #ffffff 60%);
+}
+
+.publication-filter-container .scroll-fade.is-right {
+  right: 0;
+  background: linear-gradient(to right, transparent, #ffffff 60%);
+}
+
+.publication-filter-container .scroll-btn {
+  display: flex;
+  width: 1.5rem;
+  height: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  color: #9ca3af;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: background-color 150ms;
+}
+
+.publication-filter-container .scroll-fade.is-left .scroll-btn {
+  margin-right: auto;
+}
+
+.publication-filter-container .scroll-fade.is-right .scroll-btn {
+  margin-left: auto;
+}
+
+.publication-filter-container .scroll-btn:hover {
+  background: oklch(96.7% 0.003 264.542); /* gray-100 */
+}

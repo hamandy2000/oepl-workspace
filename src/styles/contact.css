@@ -1,0 +1,210 @@
+/* Contact 페이지 — src/app/contact/page.tsx */
+
+.contact-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+/* --- 제목 --- */
+
+.contact-head-container .contact-title {
+  margin-bottom: 1rem;
+  font-size: var(--text-3xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--leading-tight);
+  color: var(--color-brand);
+}
+
+.contact-head-container .contact-desc {
+  max-width: 32rem;
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: #6b7280;
+}
+
+/* ============================================================
+   INFO — 주소 · 전화 · 이메일
+   ============================================================ */
+
+.contact-info-container {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.contact-info-container .info-item {
+  flex-shrink: 0;
+}
+
+.contact-info-container .info-item.is-address {
+  min-width: 0;
+  width: 100%;
+}
+
+.contact-info-container .info-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.contact-info-container .icon-box {
+  display: flex;
+  width: 1.75rem;
+  height: 1.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-brand) 10%, transparent);
+  color: var(--color-brand);
+}
+
+.contact-info-container .label-box {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.contact-info-container .label {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #9ca3af;
+}
+
+/* 복사 완료 안내 — 라벨 오른쪽에 잠깐 떠오른다 */
+.contact-info-container .copied-badge {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  margin-left: 0.25rem;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  pointer-events: none;
+  font-size: var(--text-2xs);
+  font-weight: var(--font-weight-medium);
+  color: rgba(232, 136, 0, 0.45);
+  opacity: 0;
+  transition: opacity 200ms;
+}
+
+.contact-info-container .copied-badge.is-shown {
+  opacity: 1;
+}
+
+/* --- 값 --- */
+
+.copyable {
+  cursor: pointer;
+  transition: color 150ms;
+}
+
+.copyable:hover {
+  color: var(--color-brand);
+}
+
+.contact-info-container .value {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-relaxed);
+  color: #080d1e;
+  word-break: break-word;
+}
+
+.contact-info-container .value-sub {
+  margin-top: 0.25rem;
+  font-size: var(--text-xs);
+  line-height: var(--leading-relaxed);
+  color: #9ca3af;
+  word-break: break-word;
+}
+
+.contact-info-container .value-plain {
+  font-size: var(--text-sm);
+  color: #374151;
+}
+
+.contact-info-container .value-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* ============================================================
+   MAP
+   ============================================================ */
+
+.contact-map-container {
+  position: relative;
+  height: 420px;
+  overflow: hidden;
+  border: 1px solid oklch(96.7% 0.003 264.542); /* gray-100 */
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.contact-map-container .map {
+  display: block;
+  border: 0;
+}
+
+.contact-map-container .map-link {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-pill);
+  background: #080d1e;
+  color: #ffffff;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  transition: background-color 150ms;
+}
+
+.contact-map-container .map-link:hover {
+  background: var(--color-brand);
+}
+
+/* ============================================================
+   BREAKPOINTS
+   ============================================================ */
+
+@media (min-width: 48rem) {
+  .contact-head-container .contact-title {
+    font-size: var(--text-4xl);
+  }
+
+  .contact-info-container {
+    grid-template-columns: auto auto auto;
+    gap: 4rem;
+  }
+
+  .contact-info-container .info-item.is-address {
+    width: auto;
+    max-width: 20rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .contact-info-container .info-item.is-address {
+    max-width: 24rem;
+  }
+}
+
+@media (min-width: 80rem) {
+  .contact-info-container .info-item.is-address {
+    max-width: 28rem;
+  }
+}

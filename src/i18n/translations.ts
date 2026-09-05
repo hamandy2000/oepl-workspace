@@ -1,3 +1,5 @@
+/** UI 문구 사전 — 한국어/영어 번역 테이블 */
+
 export type Lang = "KR" | "EN";
 
 export interface Translations {
@@ -42,7 +44,7 @@ export interface Translations {
   };
   publications: { label: string; title: string; more: string };
   footer: {
-    columns: Record<string, string[]>;
+    columns: Record<string, { label: string; href: string }[]>;
     copyright: string; contactUs: string; bizNum: string;
   };
   about: {
@@ -250,9 +252,17 @@ const KR: Translations = {
   publications: { label: "Research Output", title: "최근 논문", more: "더보기" },
   footer: {
     columns: {
-      "col1": ["연구실 소개", "교수 소개", "연구원 소개"],
-      "col2": ["논문 목록", "최근 소식", "갤러리"],
-      "col3": ["Contact"],
+      "col1": [
+        { label: "연구실 소개", href: "/about" },
+        { label: "교수 소개", href: "/members#professor" },
+        { label: "연구원 소개", href: "/members#researchers" },
+      ],
+      "col2": [
+        { label: "논문 목록", href: "/publication" },
+        { label: "최근 소식", href: "/news" },
+        { label: "갤러리", href: "/gallery" },
+      ],
+      "col3": [{ label: "Contact", href: "/contact" }],
     },
     copyright: "Copyright © Ulsan University OEPL Lab all right reserved ㅣ Designed by Haminji",
     contactUs: "Contact Us",
@@ -540,9 +550,17 @@ const EN: Translations = {
   publications: { label: "Research Output", title: "Recent Publications", more: "More" },
   footer: {
     columns: {
-      "col1": ["About", "Professor", "Researchers"],
-      "col2": ["Publications", "News", "Gallery"],
-      "col3": ["Contact"],
+      "col1": [
+        { label: "About", href: "/about" },
+        { label: "Professor", href: "/members#professor" },
+        { label: "Researchers", href: "/members#researchers" },
+      ],
+      "col2": [
+        { label: "Publications", href: "/publication" },
+        { label: "News", href: "/news" },
+        { label: "Gallery", href: "/gallery" },
+      ],
+      "col3": [{ label: "Contact", href: "/contact" }],
     },
     copyright: "Copyright © Ulsan University OEPL Lab all right reserved ㅣ Designed by Haminji",
     contactUs: "Contact Us",

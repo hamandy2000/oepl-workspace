@@ -1,5 +1,7 @@
 "use client";
 
+/** 관리자 논문 관리 — 논문 목록 CRUD */
+
 import { useMemo, useState } from "react";
 import { useLang } from "@/contexts/LangContext";
 import { useContent } from "@/contexts/ContentContext";

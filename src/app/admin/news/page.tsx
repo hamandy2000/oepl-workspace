@@ -1,5 +1,7 @@
 "use client";
 
+/** 관리자 뉴스 관리 — 작성/수정/삭제 및 사진·첨부 업로드 */
+
 import { Pin } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useLang } from "@/contexts/LangContext";

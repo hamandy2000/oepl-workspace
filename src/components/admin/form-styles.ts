@@ -1,3 +1,5 @@
+/** 관리자 폼 공통 Tailwind 클래스 상수 */
+
 export const inputClass =
   "w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#080d1e] outline-none transition-colors focus:border-[#E88800]/60 focus:ring-2 focus:ring-[#E88800]/10";
 

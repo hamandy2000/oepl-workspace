@@ -1,3 +1,5 @@
+/** 요청마다 Supabase 세션 쿠키를 갱신하는 미들웨어 로직 */
+
 import { NextResponse, type NextRequest } from "next/server";
 import {
   ADMIN_SESSION_COOKIE,

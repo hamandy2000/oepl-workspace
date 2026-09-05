@@ -1,3 +1,5 @@
+/** 관리자 파일 업로드/삭제 API — 갤러리·멤버·교수 사진 스토리지 처리 */
+
 import { NextResponse } from "next/server";
 import { requireAdminSession } from "@/lib/auth/require-admin-api";
 import { createServiceRoleClient, isAdminServerConfigured } from "@/lib/supabase/admin-server";

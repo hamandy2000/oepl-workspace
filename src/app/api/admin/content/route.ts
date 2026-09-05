@@ -1,3 +1,5 @@
+/** 관리자 콘텐츠 변경 API — 서비스 롤 권한으로 저장/삭제 액션을 처리 */
+
 import { NextResponse } from "next/server";
 import { requireAdminSession } from "@/lib/auth/require-admin-api";
 import {

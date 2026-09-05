@@ -1,5 +1,7 @@
 "use client";
 
+/** 관리자 레이아웃 — 인증 가드 후 AdminShell로 감싸기 */
+
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";

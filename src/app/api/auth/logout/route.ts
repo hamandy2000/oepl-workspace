@@ -1,3 +1,5 @@
+/** 관리자 로그아웃 API — 세션 쿠키 삭제 */
+
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { ADMIN_SESSION_COOKIE } from "@/lib/auth/admin-session";
