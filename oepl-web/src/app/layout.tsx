@@ -1,3 +1,5 @@
+/** 루트 레이아웃 — 폰트·메타데이터·전역 Provider를 설정하는 앱 최상위 레이아웃 */
+
 import type { Metadata } from "next";
 import { Google_Sans, IBM_Plex_Mono, Noto_Sans_KR } from "next/font/google";
 import Providers from "@/components/Providers";

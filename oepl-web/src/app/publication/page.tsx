@@ -1,7 +1,10 @@
 "use client";
+
+/** Publications 페이지 — 논문 목록(필터·정렬) (스타일: src/styles/publication.css, list.css) */
+
 import { useState, useRef, useEffect, useMemo } from "react";
 import Header from "@/components/Header";
-import FooterCTA from "@/components/FooterCTA";
+import Footer from "@/components/Footer";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useLang } from "@/contexts/LangContext";
 import { useContent } from "@/contexts/ContentContext";
@@ -9,17 +12,17 @@ import { publicationSortKey, publicationFilterYear } from "@/lib/content/display
 import PublicationCard from "@/components/publications/PublicationCard";
 import PageBanner from "@/components/PageBanner";
 
-function FilterBtn({ value, active, onClick }: { value: string; active: boolean; onClick: () => void }) {
+function FilterBtn({
+  value,
+  active,
+  onClick,
+}: {
+  value: string;
+  active: boolean;
+  onClick: () => void;
+}) {
   return (
-    <button
-      onClick={onClick}
-      className="px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer"
-      style={{
-        background: active ? "#E88800" : "#f9fafb",
-        color: active ? "#ffffff" : "#6b7280",
-        border: `1px solid ${active ? "#E88800" : "#e5e7eb"}`,
-      }}
-    >
+    <button onClick={onClick} className={active ? "filter-btn is-active" : "filter-btn"}>
       {value}
     </button>
   );
@@ -52,43 +55,22 @@ function SortDropdown({
   const current = options.find((o) => o.value === sortOrder)!;
 
   return (
-    <div ref={ref} className="relative">
-      <button
-        onClick={() => setOpen((p) => !p)}
-        className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all"
-        style={{
-          background: "#f9fafb",
-          color: "#374151",
-          border: "1px solid #e5e7eb",
-        }}
-      >
+    <div ref={ref} className={open ? "sort-dropdown is-open" : "sort-dropdown"}>
+      <button onClick={() => setOpen((p) => !p)} className="sort-btn">
         {current.label}
-        <ChevronRight
-          size={11}
-          className="transition-transform"
-          style={{ transform: open ? "rotate(-90deg)" : "rotate(90deg)" }}
-        />
+        <ChevronRight size={11} className="chevron" />
       </button>
 
       {open && (
-        <div
-          className="absolute right-0 z-50 mt-1 rounded-xl overflow-hidden"
-          style={{
-            background: "#ffffff",
-            border: "1px solid #e5e7eb",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-            minWidth: "100%",
-          }}
-        >
-          {options.map((o, i) => (
+        <div className="sort-menu">
+          {options.map((o) => (
             <button
               key={o.value}
-              onClick={() => { setSortOrder(o.value); setOpen(false); }}
-              className="w-full text-left px-4 py-2.5 text-xs font-semibold transition-colors hover:bg-gray-50"
-              style={{
-                color: o.value === sortOrder ? "#E88800" : "#374151",
-                borderTop: i > 0 ? "1px solid #f3f4f6" : "none",
+              onClick={() => {
+                setSortOrder(o.value);
+                setOpen(false);
               }}
+              className={o.value === sortOrder ? "sort-option is-active" : "sort-option"}
             >
               {o.label}
             </button>
@@ -184,78 +166,61 @@ export default function PublicationPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-white">
-
-        {/* Banner */}
+      <main className="page-main">
         <PageBanner title={t.publication.banner} />
 
-        {/* List */}
-        <section className="section-y">
-          <div className="max-w-5xl mx-auto px-6">
-
-            {/* Filters */}
-            <div className="flex items-center gap-3 mb-10">
-              {/* Year buttons — horizontally scrollable */}
-              <div className="flex-1 relative min-w-0">
-                {/* Left fade + button */}
+        <section className="publication-section section-y">
+          <div className="publication-wrapper">
+            <div className="publication-filter-container">
+              <div className="year-box">
                 {canScrollLeft && (
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center z-10"
-                    style={{ background: "linear-gradient(to left, transparent, white 60%)", width: 48 }}>
-                    <button
-                      onClick={scrollLeft}
-                      className="pointer-events-auto mr-auto flex items-center justify-center w-6 h-6 rounded-full transition-colors hover:bg-gray-100"
-                      style={{ color: "#9ca3af" }}
-                    >
+                  <div className="scroll-fade is-left">
+                    <button onClick={scrollLeft} className="scroll-btn" aria-label="Scroll left">
                       <ChevronLeft size={14} />
                     </button>
                   </div>
                 )}
 
-                <div ref={scrollRef} className="overflow-x-auto scrollbar-hide" onScroll={updateScrollButtons}>
-                  <div className="flex items-center gap-2 w-max px-1">
-                  {years.map((y) => (
-                    <FilterBtn key={y} value={y} active={yearFilter === y} onClick={() => setYearFilterAndReset(y)} />
-                  ))}
+                <div ref={scrollRef} className="year-scroll scrollbar-hide" onScroll={updateScrollButtons}>
+                  <div className="year-list">
+                    {years.map((y) => (
+                      <FilterBtn
+                        key={y}
+                        value={y}
+                        active={yearFilter === y}
+                        onClick={() => setYearFilterAndReset(y)}
+                      />
+                    ))}
                   </div>
                 </div>
 
-                {/* Right fade + button */}
                 {canScrollRight && (
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center z-10"
-                    style={{ background: "linear-gradient(to right, transparent, white 60%)", width: 48 }}>
-                    <button
-                      onClick={scrollRight}
-                      className="pointer-events-auto ml-auto flex items-center justify-center w-6 h-6 rounded-full transition-colors hover:bg-gray-100"
-                      style={{ color: "#9ca3af" }}
-                    >
+                  <div className="scroll-fade is-right">
+                    <button onClick={scrollRight} className="scroll-btn" aria-label="Scroll right">
                       <ChevronRight size={14} />
                     </button>
                   </div>
                 )}
               </div>
 
-              {/* Sort dropdown — fixed right */}
-              <div className="flex-shrink-0">
-                <SortDropdown sortOrder={sortOrder} setSortOrder={setSortOrder} />
-              </div>
+              <SortDropdown sortOrder={sortOrder} setSortOrder={setSortOrder} />
             </div>
 
-            <p className="text-xs text-[#9ca3af] mb-6">{t.publication.count(filtered.length)}</p>
+            <p className="list-count">{t.publication.count(filtered.length)}</p>
 
-            <div className="flex flex-col gap-4">
+            <div className="publication-list-container">
               {paginated.map((pub) => (
                 <PublicationCard key={pub.id} pub={pub} lang={lang} />
               ))}
             </div>
 
-            {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-1 mt-10">
+              <div className="pagination-container">
                 <button
                   onClick={() => changePage(page - 1)}
                   disabled={page === 1}
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-xs transition-colors disabled:opacity-30"
-                  style={{ border: "1px solid #e5e7eb", color: "#6b7280" }}
+                  className="page-btn is-nav"
+                  aria-label="Previous page"
                 >
                   <ChevronLeft size={13} />
                 </button>
@@ -264,12 +229,7 @@ export default function PublicationPage() {
                   <button
                     key={p}
                     onClick={() => changePage(p)}
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all"
-                    style={{
-                      background: p === page ? "#E88800" : "transparent",
-                      color: p === page ? "#ffffff" : "#6b7280",
-                      border: p === page ? "1px solid #E88800" : "1px solid transparent",
-                    }}
+                    className={p === page ? "page-btn is-active" : "page-btn"}
                   >
                     {p}
                   </button>
@@ -278,19 +238,17 @@ export default function PublicationPage() {
                 <button
                   onClick={() => changePage(page + 1)}
                   disabled={page === totalPages}
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-xs transition-colors disabled:opacity-30"
-                  style={{ border: "1px solid #e5e7eb", color: "#6b7280" }}
+                  className="page-btn is-nav"
+                  aria-label="Next page"
                 >
                   <ChevronRight size={13} />
                 </button>
               </div>
             )}
-
           </div>
         </section>
-
       </main>
-      <FooterCTA />
+      <Footer />
     </>
   );
 }

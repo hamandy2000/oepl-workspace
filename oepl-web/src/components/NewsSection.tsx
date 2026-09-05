@@ -1,5 +1,7 @@
 "use client";
 
+/** 홈 뉴스 섹션 — 캐러셀/그리드 전환 표시 (스타일: src/styles/news.css) */
+
 import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight, Newspaper } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -14,6 +16,15 @@ const HOME_NEWS_LIMIT = 4;
 const CAROUSEL_MIN_ITEMS = 3;
 const SLIDE_GAP_PX = 20;
 
+type Labels = { badgePinned: string; badgeNew: string; readMore: string };
+
+type ListProps = {
+  items: NewsItem[];
+  lang: ReturnType<typeof useLang>["lang"];
+  latestId: number | null;
+  labels: Labels;
+};
+
 function NewsCard({
   item,
   lang,
@@ -23,30 +34,23 @@ function NewsCard({
   item: NewsItem;
   lang: ReturnType<typeof useLang>["lang"];
   latestId: number | null;
-  labels: { badgePinned: string; badgeNew: string; readMore: string };
+  labels: Labels;
 }) {
   const display = newsDisplay(item, lang);
 
   return (
-    <Link
-      href={`/news/${item.id}`}
-      className="group flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-5 transition-colors hover:border-[#E88800]/40"
-    >
-      <div className="flex items-center justify-between gap-2 mb-3">
-        <span className="px-2 py-0.5 rounded-full text-2xs font-semibold bg-[#E88800]/15 text-[#E88800] border border-[#E88800]/30 truncate">
-          {display.type}
-        </span>
-        <span className="text-xs text-[#9ca3af] shrink-0">{display.date}</span>
+    <Link href={`/news/${item.id}`} className="news-card">
+      <div className="card-head">
+        <span className="type">{display.type}</span>
+        <span className="date">{display.date}</span>
       </div>
-      <h3 className="text-[#080d1e] font-semibold text-sm leading-snug line-clamp-2 flex flex-wrap items-center gap-1.5 mb-2 group-hover:text-[#E88800] transition-colors">
+      <h3 className="card-title">
         {item.pinned && <NewsPinnedBadge label={labels.badgePinned} />}
         {item.id === latestId && <NewsNewBadge label={labels.badgeNew} />}
-        <span className="min-w-0">{display.title}</span>
+        <span className="text">{display.title}</span>
       </h3>
-      <p className="text-[#6b7280] text-xs leading-relaxed line-clamp-2 flex-1 mb-3">
-        {display.detail}
-      </p>
-      <div className="flex items-center gap-1 text-xs font-semibold text-[#E88800]">
+      <p className="card-desc">{display.detail}</p>
+      <div className="read-more">
         {labels.readMore} <ArrowRight size={12} />
       </div>
     </Link>
@@ -63,15 +67,10 @@ function NewsDots({
   onSelect?: (index: number) => void;
 }) {
   return (
-    <div className="mt-6 flex items-center justify-center gap-2">
+    <div className="news-dots-container">
       {Array.from({ length: count }, (_, i) => {
         const active = i === activeIndex;
-        const className = "rounded-full transition-all";
-        const style = {
-          width: active ? 20 : 8,
-          height: 8,
-          background: active ? "#E88800" : "#d1d5db",
-        };
+        const className = active ? "dot is-active" : "dot";
 
         if (onSelect) {
           return (
@@ -80,40 +79,22 @@ function NewsDots({
               type="button"
               onClick={() => onSelect(i)}
               className={className}
-              style={style}
               aria-label={`Go to news slide ${i + 1}`}
               aria-current={active ? "true" : undefined}
             />
           );
         }
 
-        return (
-          <span
-            key={i}
-            className={className}
-            style={style}
-            aria-hidden={!active}
-          />
-        );
+        return <span key={i} className={className} aria-hidden={!active} />;
       })}
     </div>
   );
 }
 
-function NewsStaticGrid({
-  items,
-  lang,
-  latestId,
-  labels,
-}: {
-  items: NewsItem[];
-  lang: ReturnType<typeof useLang>["lang"];
-  latestId: number | null;
-  labels: { badgePinned: string; badgeNew: string; readMore: string };
-}) {
+function NewsStaticGrid({ items, lang, latestId, labels }: ListProps) {
   return (
     <>
-      <div className={`grid gap-5 ${items.length === 1 ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"}`}>
+      <div className={items.length === 1 ? "news-grid-container" : "news-grid-container is-multi"}>
         {items.map((item) => (
           <NewsCard key={item.id} item={item} lang={lang} latestId={latestId} labels={labels} />
         ))}
@@ -123,17 +104,7 @@ function NewsStaticGrid({
   );
 }
 
-function NewsCarousel({
-  items,
-  lang,
-  latestId,
-  labels,
-}: {
-  items: NewsItem[];
-  lang: ReturnType<typeof useLang>["lang"];
-  latestId: number | null;
-  labels: { badgePinned: string; badgeNew: string; readMore: string };
-}) {
+function NewsCarousel({ items, lang, latestId, labels }: ListProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [slidesPerView, setSlidesPerView] = useState(1);
@@ -192,12 +163,12 @@ function NewsCarousel({
 
   return (
     <div>
-      <div className="relative px-4 sm:px-6 md:px-8">
+      <div className="news-carousel-container">
         <button
           type="button"
           onClick={() => scrollToIndex(activeIndex - 1)}
           disabled={!canPrev}
-          className="absolute left-0 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center size-9 rounded-full border border-gray-200 bg-white text-[#6b7280] shadow-md transition-colors hover:border-[#E88800]/40 hover:text-[#E88800] disabled:opacity-30 disabled:pointer-events-none"
+          className="nav-btn is-prev"
           aria-label="Previous news"
         >
           <ChevronLeft size={18} />
@@ -206,7 +177,7 @@ function NewsCarousel({
           type="button"
           onClick={() => scrollToIndex(activeIndex + 1)}
           disabled={!canNext}
-          className="absolute right-0 top-1/2 z-10 translate-x-1/2 -translate-y-1/2 flex items-center justify-center size-9 rounded-full border border-gray-200 bg-white text-[#6b7280] shadow-md transition-colors hover:border-[#E88800]/40 hover:text-[#E88800] disabled:opacity-30 disabled:pointer-events-none"
+          className="nav-btn is-next"
           aria-label="Next news"
         >
           <ChevronRight size={18} />
@@ -215,13 +186,13 @@ function NewsCarousel({
         <div
           ref={trackRef}
           onScroll={syncActiveIndex}
-          className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth scrollbar-hide"
+          className="track scrollbar-hide"
           style={{ gap: SLIDE_GAP_PX }}
         >
           {items.map((item) => (
             <div
               key={item.id}
-              className="snap-start shrink-0"
+              className="slide"
               style={slideWidth > 0 ? { width: slideWidth } : { width: "100%" }}
             >
               <NewsCard item={item} lang={lang} latestId={latestId} labels={labels} />
@@ -235,22 +206,11 @@ function NewsCarousel({
   );
 }
 
-function NewsList({
-  items,
-  lang,
-  latestId,
-  labels,
-}: {
-  items: NewsItem[];
-  lang: ReturnType<typeof useLang>["lang"];
-  latestId: number | null;
-  labels: { badgePinned: string; badgeNew: string; readMore: string };
-}) {
-  if (items.length < CAROUSEL_MIN_ITEMS) {
-    return <NewsStaticGrid items={items} lang={lang} latestId={latestId} labels={labels} />;
+function NewsList(props: ListProps) {
+  if (props.items.length < CAROUSEL_MIN_ITEMS) {
+    return <NewsStaticGrid {...props} />;
   }
-
-  return <NewsCarousel items={items} lang={lang} latestId={latestId} labels={labels} />;
+  return <NewsCarousel {...props} />;
 }
 
 export default function NewsSection() {
@@ -269,31 +229,24 @@ export default function NewsSection() {
   };
 
   return (
-    <section id="news" className="section-y section-anchor bg-[#f9fafb] border-y border-gray-100">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center justify-between mb-10">
+    <section id="news" className="news-section section-y section-anchor">
+      <div className="section-wrapper">
+        <div className="section-head-container">
           <div>
-            <p className="section-label mb-1">{t.news.label}</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-[#080d1e]">{t.news.title}</h2>
+            <p className="section-label">{t.news.label}</p>
+            <h2 className="section-title">{t.news.title}</h2>
           </div>
-          <Link
-            href="/news"
-            className="hidden md:inline-flex items-center gap-1.5 text-sm font-medium hover:opacity-70 transition-opacity"
-            style={{ color: "#E88800" }}
-          >
+          <Link href="/news" className="more-link">
             {t.news.more}
             <ArrowRight size={15} />
           </Link>
         </div>
 
         {items.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[#E88800]/30 bg-white px-6 py-12 text-center">
-            <Newspaper size={40} strokeWidth={1.5} className="mx-auto mb-4 text-[#E88800]/50" aria-hidden />
-            <p className="text-base font-medium text-[#374151] mb-5">{t.news.empty}</p>
-            <Link
-              href="/news"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#E88800] hover:underline"
-            >
+          <div className="news-empty-container">
+            <Newspaper size={40} strokeWidth={1.5} className="empty-icon" aria-hidden />
+            <p className="empty-text">{t.news.empty}</p>
+            <Link href="/news" className="empty-link">
               {t.news.more}
               <ArrowRight size={14} />
             </Link>
@@ -302,7 +255,7 @@ export default function NewsSection() {
           <NewsList items={items} lang={lang} latestId={latestId} labels={labels} />
         )}
 
-        <div className="mt-8 text-center md:hidden">
+        <div className="more-link-container">
           <Link href="/news" className="btn-more">
             {t.news.more} <ArrowRight size={13} />
           </Link>

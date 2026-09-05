@@ -1,5 +1,7 @@
 "use client";
 
+/** 관리자 공통 셸 — 사이드바 내비게이션과 로그아웃 */
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";

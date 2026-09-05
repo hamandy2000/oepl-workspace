@@ -1,3 +1,5 @@
+/** ESLint 설정 — next core-web-vitals + typescript 규칙 */
+
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";

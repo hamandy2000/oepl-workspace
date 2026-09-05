@@ -1,8 +1,38 @@
+/* 전역 스타일시트 — Tailwind 로드, 디자인 토큰(CSS 변수), 공통 유틸리티 클래스 */
+
+/* 컴포넌트별 CSS — 새 파일을 만들면 여기에 한 줄씩 추가한다.
+   반드시 @import "tailwindcss" 위에 둘 것. 아래에 두면 Tailwind가 자기 내용을
+   먼저 펼치면서 이 @import가 파일 최상단 규칙이 아니게 되어 조용히 무시된다. */
+@import "../styles/header.css";
+@import "../styles/footer.css";
+@import "../styles/page-banner.css";
+@import "../styles/glass-strips.css";
+@import "../styles/badge.css";
+@import "../styles/section.css";
+@import "../styles/button.css";
+@import "../styles/intro.css";
+@import "../styles/focus.css";
+@import "../styles/publication.css";
+@import "../styles/hero.css";
+@import "../styles/research.css";
+@import "../styles/news.css";
+@import "../styles/not-found.css";
+@import "../styles/login.css";
+@import "../styles/contact.css";
+@import "../styles/about.css";
+@import "../styles/brand.css";
+@import "../styles/members.css";
+@import "../styles/list.css";
+@import "../styles/gallery.css";
+@import "../styles/news-detail.css";
+
 @import "tailwindcss";
 
 /* ============================================================
    OEPL Design System — Design Tokens
-   Source of truth: src/styles/tokens.json
+   이 @theme 블록이 토큰의 유일한 source of truth 다.
+   값을 바꿀 때는 여기만 고치고, CSS/TSX 에서는 var(--*) 로만 참조한다.
+   (구 src/styles/tokens.json 은 손으로 미러링하다 어긋나 제거됨)
    ============================================================ */
 
 @theme inline {
@@ -69,6 +99,26 @@
   --leading-loose:   1.4;
   --leading-body:    1.5;
   --leading-body-px: 20px;
+
+  /* ----------------------------------------------------------
+     TEXT STYLES (합성 스펙 — Figma 텍스트 스타일 1:1 대응)
+     CSS 변수로는 묶어 표현할 수 없어 표로만 남긴다.
+     사용할 때는 아래 --text-* / --font-weight-* / --leading-* 를 조합한다.
+
+       H1  Title Hero    64px / 1.1  / Bold      sans
+       H2  Title Page    48px / 1.15 / Bold      sans
+       H3  Heading       36px / 1.2  / Bold      sans
+       H4  Subheading    24px / 1.3  / Regular   sans
+       H5  Subtitle      20px / 1.4  / Regular   sans
+       H6                18px / 1.4  / Medium    sans
+       H7  / Input       16px / 1.5  / Medium    sans
+       Body Base         16px / 20px / Regular   sans
+       Body Strong       16px / 20px / SemiBold  sans
+       Body Small        12px / 1.5  / Regular   sans
+       Body Small Strong 12px / 1.5  / SemiBold  sans
+       Input             16px / 1.4  / Regular   sans
+       Code              13px / 1.5  / Regular   mono
+  ---------------------------------------------------------- */
 
   /* ----------------------------------------------------------
      COLOR — PRIMITIVES
@@ -157,89 +207,6 @@ body {
    UTILITY CLASSES — token 기반
    ============================================================ */
 
-/* Glow effects */
-.glow-orange {
-  text-shadow: 0 0 28px rgba(232, 136, 0, 0.55);
-}
-.glow-box-orange {
-  box-shadow:
-    0 0 28px rgba(232, 136, 0, 0.28),
-    0 0 60px rgba(232, 136, 0, 0.10);
-}
-
-/* Hero — Figma Frame 175 / Ellipse 63 */
-.hero-section {
-  color-scheme: light;
-  /* vh fallback → svh/dvh; lvh on desktop for full laptop viewport */
-  min-height: 100vh;
-  min-height: 100svh;
-  min-height: 100dvh;
-  --hero-glow-x: 71.2%;
-  --hero-glow-y: 57.2%;
-  --hero-glow-w: 336px;
-  --hero-glow-h: 315px;
-  --hero-glow-rx: 168px;
-  --hero-glow-ry: 157.5px;
-  --hero-glow-blur: 75px;
-}
-@media (min-width: 768px) {
-  .hero-section {
-    min-height: 100lvh;
-  }
-}
-
-/* Figma Frame 175 — gradient from below header; black holds ~10% then orange */
-.hero-section__gradient {
-  background: linear-gradient(
-    180deg,
-    #000000 0%,
-    #000000 10%,
-    #e88800 58.24%,
-    #ffffff 100%
-  );
-}
-
-/* Figma Ellipse 63 — behind glass, fill #FFF, blur 75, plus-lighter */
-.hero-glow-ellipse {
-  position: absolute;
-  z-index: 1;
-  left: var(--hero-glow-x);
-  top: var(--hero-glow-y);
-  width: var(--hero-glow-w);
-  height: var(--hero-glow-h);
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: #ffffff;
-  mix-blend-mode: plus-lighter;
-  filter: blur(var(--hero-glow-blur));
-  -webkit-filter: blur(var(--hero-glow-blur));
-}
-
-/* Inner page banner — Figma Frame 642:516 / Frame 179 */
-.page-banner {
-  isolation: isolate;
-}
-.page-banner__ellipse {
-  position: absolute;
-  z-index: 0;
-  transform: rotate(180deg);
-}
-/* Figma 642:516 — banner band 135px; ellipses from y=134/97 frame → top 70/33 below header */
-.page-banner__ellipse--wide {
-  top: 53%;
-  left: 0;
-  right: 0;
-  width: 100%;
-  height: 86.67%;
-}
-.page-banner__ellipse--center {
-  top: 29%;
-  left: 50%;
-  width: 74.31%;
-  max-width: 1070px;
-  height: 114.07%;
-  transform: translateX(-50%) rotate(180deg);
-}
 
 /* Card hover */
 .card-hover {
@@ -250,14 +217,6 @@ body {
   box-shadow: 0 4px 12px rgba(232, 136, 0, 0.16);
 }
 
-/* Star background */
-.hero-stars {
-  background-image:
-    radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
-  background-size: 80px 80px, 40px 40px;
-  background-position: 0 0, 20px 20px;
-}
 
 /* Section label */
 .section-label {
@@ -277,25 +236,6 @@ body {
   scroll-margin-top: var(--spacing-1600);
 }
 
-/* More / CTA button — token 기반 */
-.btn-more {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-200);                /* 8px */
-  padding: var(--spacing-200) var(--spacing-600);  /* 8px 24px */
-  border-radius: var(--radius-pill);
-  border: 1px solid color-mix(in srgb, var(--color-brand) 50%, transparent);
-  color: var(--color-brand);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  background: transparent;
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
-}
-.btn-more:hover {
-  background: var(--color-brand);
-  border-color: var(--color-brand);
-  color: var(--color-neutral-0);
-}
 
 /* Scrollbar hide utility */
 .scrollbar-hide::-webkit-scrollbar { display: none; }
@@ -323,7 +263,7 @@ body {
 /* Admin modal — scrollbar inside white panel */
 .admin-modal-scroll {
   scrollbar-width: thin;
-  scrollbar-color: #E88800 #ffffff;
+  scrollbar-color: var(--color-brand) #ffffff;
 }
 .admin-modal-scroll::-webkit-scrollbar {
   width: 4px;
@@ -332,11 +272,11 @@ body {
   background: #ffffff;
 }
 .admin-modal-scroll::-webkit-scrollbar-thumb {
-  background: #E88800;
+  background: var(--color-brand);
   border-radius: 9999px;
 }
 .admin-modal-scroll::-webkit-scrollbar-thumb:hover {
-  background: #CC7700;
+  background: var(--color-brand-hover);
 }
 
 /* Scrollbar */

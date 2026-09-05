@@ -1,3 +1,5 @@
+/** 서비스 롤 Supabase 클라이언트 생성 (서버 전용) */
+
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 

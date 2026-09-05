@@ -1,5 +1,7 @@
 "use client";
 
+/** 뉴스 상세 본문 — 메타 정보·사진·첨부파일 (스타일: src/styles/news-detail.css) */
+
 import { Download, Eye, FileText, Paperclip, User } from "lucide-react";
 import type { ContentPhoto, NewsFile } from "@/types/content";
 import type { Lang } from "@/i18n/translations";
@@ -46,75 +48,73 @@ function resolveAuthor(author: string, defaultAuthor: string): string {
   return trimmed;
 }
 
-export default function NewsDetailArticle({ display, viewCount, lang, labels, isLatest, isPinned }: Props) {
+export default function NewsDetailArticle({
+  display,
+  viewCount,
+  lang,
+  labels,
+  isLatest,
+  isPinned,
+}: Props) {
   const photos = display.photos;
   const attachments = display.files;
   const locale = lang === "KR" ? "ko-KR" : "en-US";
   const authorName = resolveAuthor(display.author, labels.defaultAuthor);
 
   return (
-    <article className="rounded-2xl border border-gray-100 bg-white overflow-hidden shadow-sm">
-      <div className="p-6 md:p-8">
-        <h2 className="text-2xl md:text-[1.75rem] font-bold text-[#080d1e] leading-snug mb-5 flex items-start gap-2 flex-wrap">
-          {isPinned && <NewsPinnedBadge label={labels.badgePinned} className="mt-1.5 md:mt-2" />}
-          {isLatest && <NewsNewBadge label={labels.badgeNew} className="mt-1.5 md:mt-2" />}
+    <article className="news-article">
+      <div className="article-inner">
+        <h2 className="article-title">
+          {isPinned && <NewsPinnedBadge label={labels.badgePinned} className="is-offset" />}
+          {isLatest && <NewsNewBadge label={labels.badgeNew} className="is-offset" />}
           {display.title}
         </h2>
 
-        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3 px-4 mb-6 rounded-xl bg-[#f9fafb] border border-gray-100 text-xs text-[#6b7280]">
-          <div className="flex flex-wrap items-center gap-4">
-            <span className="inline-flex items-center gap-1.5">
-              <User size={14} className="text-[#9ca3af]" />
-              <span className="text-[#9ca3af]">{labels.author}</span>
-              <span className="font-medium text-[#374151]">{authorName}</span>
+        <div className="meta-bar">
+          <div className="meta-group">
+            <span className="meta-item">
+              <User size={14} className="meta-icon" />
+              <span className="meta-label">{labels.author}</span>
+              <span className="meta-value">{authorName}</span>
             </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Eye size={14} className="text-[#9ca3af]" />
-              <span className="text-[#9ca3af]">{labels.views}</span>
-              <span className="font-medium text-[#374151] tabular-nums">
-                {viewCount.toLocaleString(locale)}
-              </span>
+            <span className="meta-item">
+              <Eye size={14} className="meta-icon" />
+              <span className="meta-label">{labels.views}</span>
+              <span className="meta-value is-num">{viewCount.toLocaleString(locale)}</span>
             </span>
           </div>
-          <time className="inline-flex items-center gap-1.5 shrink-0 ml-auto tabular-nums">
-            <span className="text-[#9ca3af]">{labels.postedDate}</span>
-            <span className="font-medium text-[#374151]">{display.date}</span>
+          <time className="meta-item is-date">
+            <span className="meta-label">{labels.postedDate}</span>
+            <span className="meta-value">{display.date}</span>
           </time>
         </div>
 
-        <div className="text-[15px] text-[#4b5563] leading-[1.85] whitespace-pre-wrap mb-8">
-          {display.detail}
-        </div>
+        <div className="article-body">{display.detail}</div>
 
         {photos.length > 0 && (
-          <div className="mb-8">
-            <div className="grid grid-cols-1 gap-3">
-              {photos.map((photo) => (
-                <div
-                  key={photo.id}
-                  className="rounded-xl overflow-hidden border border-gray-100 bg-[#f9fafb]"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={photo.url} alt="" className="w-full h-auto block" />
-                </div>
-              ))}
-            </div>
+          <div className="photo-container">
+            {photos.map((photo) => (
+              <div key={photo.id} className="photo-box">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={photo.url} alt="" className="photo-img" />
+              </div>
+            ))}
           </div>
         )}
 
-        <div className="pt-6 border-t border-gray-100">
-          <h3 className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#080d1e] mb-4">
-            <Paperclip size={15} className="text-[#E88800]" />
+        <div className="attach-container">
+          <h3 className="attach-title">
+            <Paperclip size={15} className="attach-icon" />
             {labels.attachments}
             {attachments.length > 0 && (
-              <span className="text-xs font-normal text-[#9ca3af]">({attachments.length})</span>
+              <span className="attach-count">({attachments.length})</span>
             )}
           </h3>
 
           {attachments.length === 0 ? (
-            <p className="text-sm text-[#9ca3af] text-center py-2">{labels.noAttachments}</p>
+            <p className="attach-empty">{labels.noAttachments}</p>
           ) : (
-            <ul className="flex flex-col gap-2">
+            <ul className="attach-list">
               {attachments.map((file) => {
                 const ext = fileExtension(file.fileName);
                 const style = fileExtensionStyle(ext);
@@ -126,23 +126,19 @@ export default function NewsDetailArticle({ display, viewCount, lang, labels, is
                       target="_blank"
                       rel="noopener noreferrer"
                       download={file.fileName}
-                      className="group flex items-center gap-3 rounded-xl border border-gray-100 bg-[#fafafa] px-4 py-3 hover:border-[#E88800]/30 hover:bg-[#FFF7EB]/40 transition-colors"
+                      className="attach-item"
                     >
-                      <div
-                        className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                        style={{ background: style.bg }}
-                      >
+                      {/* 확장자별 색은 데이터에서 오므로 인라인으로 둔다 */}
+                      <div className="attach-icon-box" style={{ background: style.bg }}>
                         <FileText size={18} style={{ color: style.color }} />
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-[#374151] truncate group-hover:text-[#E88800] transition-colors">
-                          {file.fileName}
-                        </p>
-                        <p className="text-2xs font-semibold mt-0.5" style={{ color: style.color }}>
+                      <div className="attach-text">
+                        <p className="attach-name">{file.fileName}</p>
+                        <p className="attach-ext" style={{ color: style.color }}>
                           {ext}
                         </p>
                       </div>
-                      <span className="shrink-0 inline-flex items-center gap-1 text-xs font-medium text-[#E88800] px-3 py-1.5 rounded-lg border border-[#E88800]/20 bg-white group-hover:bg-[#E88800] group-hover:text-white transition-colors">
+                      <span className="attach-download">
                         <Download size={13} />
                         {labels.download}
                       </span>

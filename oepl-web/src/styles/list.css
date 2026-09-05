@@ -1,0 +1,174 @@
+/* 목록 페이지 공통 — 필터 버튼, 정렬 드롭다운, 개수 표시, 페이지네이션
+ * publication / gallery / news 목록이 함께 쓴다
+ */
+
+/* ============================================================
+   FILTER — 알약형 버튼
+   ============================================================ */
+
+.filter-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-btn {
+  padding: 0.375rem 1rem;
+  border: 1px solid oklch(92.8% 0.006 264.531); /* gray-200 */
+  border-radius: var(--radius-pill);
+  background: #f9fafb;
+  color: #6b7280;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms, color 150ms, border-color 150ms;
+}
+
+.filter-btn.is-active {
+  border-color: var(--color-brand);
+  background: var(--color-brand);
+  color: #ffffff;
+}
+
+/* ============================================================
+   SORT — 드롭다운
+   ============================================================ */
+
+.sort-dropdown {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.sort-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 1rem;
+  border: 1px solid oklch(92.8% 0.006 264.531); /* gray-200 */
+  border-radius: var(--radius-pill);
+  background: #f9fafb;
+  color: #374151;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: background-color 150ms, border-color 150ms;
+}
+
+/* 닫혔을 때 아래, 열렸을 때 위를 가리킨다 */
+.sort-btn .chevron {
+  transform: rotate(90deg);
+  transition: transform 150ms;
+}
+
+.sort-dropdown.is-open .sort-btn .chevron {
+  transform: rotate(-90deg);
+}
+
+.sort-menu {
+  position: absolute;
+  right: 0;
+  z-index: 50;
+  margin-top: 0.25rem;
+  min-width: 100%;
+  overflow: hidden;
+  border: 1px solid oklch(92.8% 0.006 264.531); /* gray-200 */
+  border-radius: 0.75rem;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.08);
+}
+
+.sort-option {
+  display: block;
+  width: 100%;
+  padding: 0.625rem 1rem;
+  text-align: left;
+  white-space: nowrap;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  color: #374151;
+  cursor: pointer;
+  transition: background-color 150ms;
+}
+
+.sort-option + .sort-option {
+  border-top: 1px solid oklch(96.7% 0.003 264.542); /* gray-100 */
+}
+
+.sort-option:hover {
+  background: #f9fafb;
+}
+
+.sort-option.is-active {
+  color: var(--color-brand);
+}
+
+/* ============================================================
+   COUNT — 목록 개수
+   ============================================================ */
+
+.list-count {
+  margin-bottom: 1.5rem;
+  font-size: var(--text-xs);
+  color: #9ca3af;
+}
+
+.list-count.is-right {
+  text-align: right;
+}
+
+/* ============================================================
+   PAGINATION
+   ============================================================ */
+
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-top: 2.5rem;
+}
+
+/* 위 여백이 더 넓은 목록 */
+.pagination-container.is-loose {
+  margin-top: 4rem;
+}
+
+.page-btn {
+  display: flex;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: #6b7280;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: background-color 150ms, color 150ms, border-color 150ms;
+}
+
+/* 이전 / 다음 */
+.page-btn.is-nav {
+  border-color: oklch(92.8% 0.006 264.531); /* gray-200 */
+  font-weight: var(--font-weight-regular);
+}
+
+.page-btn.is-active {
+  border-color: var(--color-brand);
+  background: var(--color-brand);
+  color: #ffffff;
+}
+
+.page-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* 개수 표시가 정렬 드롭다운과 같은 줄에 놓일 때 */
+.list-count.is-inline {
+  margin-bottom: 0;
+}

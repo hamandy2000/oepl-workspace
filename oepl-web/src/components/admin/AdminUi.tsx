@@ -1,5 +1,7 @@
 "use client";
 
+/** 관리자 공용 UI — 테이블·모달·드롭다운·검색·페이지네이션 */
+
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useLang } from "@/contexts/LangContext";

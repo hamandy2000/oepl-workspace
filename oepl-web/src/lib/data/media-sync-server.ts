@@ -1,3 +1,5 @@
+/** 서버(서비스 롤) 뉴스 미디어 동기화 */
+
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { ContentPhoto, NewsFile } from "@/types/content";
 import { NEW_ID } from "@/lib/data/ids";

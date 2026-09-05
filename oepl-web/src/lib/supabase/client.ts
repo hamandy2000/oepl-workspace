@@ -1,3 +1,5 @@
+/** 브라우저용 Supabase 클라이언트 */
+
 import { createBrowserClient } from "@supabase/ssr";
 import { isSupabaseConfigured } from "./config";
 

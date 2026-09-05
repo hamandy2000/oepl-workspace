@@ -1,10 +1,12 @@
 "use client";
 
+/** 관리자 로그인 페이지 (스타일: src/styles/login.css) */
+
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/Header";
-import FooterCTA from "@/components/FooterCTA";
+import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLang } from "@/contexts/LangContext";
 import PageBanner from "@/components/PageBanner";
@@ -52,28 +54,21 @@ function LoginPageContent() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-white">
+      <main className="page-main">
         <PageBanner title={l.banner} />
 
-        <section className="section-y">
-          <div className="max-w-md mx-auto px-6">
-            <div className="mb-8 text-center">
-              <h2 className="text-2xl font-bold text-[#080d1e] mb-2">{l.heading}</h2>
-              <p className="text-sm text-[#6b7280] leading-relaxed">{l.desc}</p>
+        <section className="login-section section-y">
+          <div className="login-wrapper">
+            <div className="login-head-container">
+              <h2 className="login-title">{l.heading}</h2>
+              <p className="login-desc">{l.desc}</p>
             </div>
 
-            <form
-              onSubmit={handleSubmit}
-              className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm flex flex-col gap-5"
-            >
-              {error && (
-                <p className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
-                  {error}
-                </p>
-              )}
+            <form onSubmit={handleSubmit} className="login-form-container">
+              {error && <p className="error">{error}</p>}
 
-              <div className="flex flex-col gap-2">
-                <label htmlFor="login-id" className="text-xs font-semibold text-[#374151]">
+              <div className="field">
+                <label htmlFor="login-id" className="label">
                   {l.idLabel}
                 </label>
                 <input
@@ -84,12 +79,12 @@ function LoginPageContent() {
                   placeholder={l.idPlaceholder}
                   autoComplete="username"
                   required
-                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-[#080d1e] placeholder:text-[#9ca3af] outline-none transition-colors focus:border-[#E88800]/60 focus:ring-2 focus:ring-[#E88800]/10"
+                  className="input"
                 />
               </div>
 
-              <div className="flex flex-col gap-2">
-                <label htmlFor="login-password" className="text-xs font-semibold text-[#374151]">
+              <div className="field">
+                <label htmlFor="login-password" className="label">
                   {l.passwordLabel}
                 </label>
                 <input
@@ -100,29 +95,28 @@ function LoginPageContent() {
                   placeholder={l.passwordPlaceholder}
                   autoComplete="current-password"
                   required
-                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-[#080d1e] placeholder:text-[#9ca3af] outline-none transition-colors focus:border-[#E88800]/60 focus:ring-2 focus:ring-[#E88800]/10"
+                  className="input"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={submitting}
-                className="mt-2 w-full rounded-full py-3 text-sm font-semibold text-white transition-colors hover:opacity-90 cursor-pointer disabled:opacity-60"
-                style={{ background: "#E88800" }}
+                className="btn-primary btn-block btn-strong submit-btn"
               >
                 {l.submit}
               </button>
             </form>
 
-            <p className="mt-6 text-center text-xs text-[#9ca3af]">
-              <Link href="/" className="hover:text-[#E88800] transition-colors">
+            <p className="login-foot">
+              <Link href="/" className="back-link">
                 {l.backHome}
               </Link>
             </p>
           </div>
         </section>
       </main>
-      <FooterCTA />
+      <Footer />
     </>
   );
 }

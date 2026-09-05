@@ -1,3 +1,5 @@
+/** Focus 섹션 전용 커스텀 아이콘 세트 */
+
 import { forwardRef, type ReactNode, type Ref } from "react";
 import { Layers, type LucideProps } from "lucide-react";
 

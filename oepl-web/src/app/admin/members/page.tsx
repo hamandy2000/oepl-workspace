@@ -1,6 +1,6 @@
 "use client";
 
-
+/** 관리자 멤버 관리 — 교수 프로필·멤버 정보·연혁 편집 */
 
 import { ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";

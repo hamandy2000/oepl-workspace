@@ -1,3 +1,5 @@
+/** Next 프록시(미들웨어) 진입점 — 세션 갱신 및 적용 경로 matcher */
+
 import { type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 

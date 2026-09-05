@@ -1,5 +1,7 @@
 "use client";
 
+/** 브랜드 마크 미리보기 — 밝은/어두운 배경 전환 (스타일: src/styles/brand.css) */
+
 import { useEffect, useState } from "react";
 import { useLang } from "@/contexts/LangContext";
 import AnimatedSymbolMark from "@/components/brand/AnimatedSymbolMark";
@@ -29,11 +31,7 @@ function BgToggleButton({
     <button
       type="button"
       onClick={onClick}
-      className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-        active
-          ? "border-[var(--color-brand)] text-[var(--color-brand)] bg-[color-mix(in_srgb,var(--color-brand)_8%,transparent)]"
-          : "border-[var(--color-neutral-200)] text-[var(--color-neutral-500)] hover:border-[var(--color-neutral-400)]"
-      }`}
+      className={active ? "bg-toggle-btn is-active" : "bg-toggle-btn"}
     >
       {children}
     </button>
@@ -61,46 +59,36 @@ export default function BrandMarkPreview({ tab }: Props) {
 
   const replay = () => setPlayToken((n) => n + 1);
 
-  const previewBg = hasBgToggle && darkBg ? "var(--color-neutral-900)" : "var(--color-neutral-0)";
-  const previewBorder =
-    hasBgToggle && darkBg ? "1px solid var(--color-neutral-800)" : "1px solid var(--color-neutral-200)";
+  const boxClass = [
+    "preview-box",
+    isSignature ? "is-signature" : isLogo ? "is-logo" : "is-symbol",
+    hasBgToggle && darkBg ? "is-dark" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
-  const imageSrc = isSignature
-    ? darkBg
-      ? SIGNATURE_SRC.dark
-      : SIGNATURE_SRC.light
-    : null;
+  const imageSrc = isSignature ? (darkBg ? SIGNATURE_SRC.dark : SIGNATURE_SRC.light) : null;
 
   return (
-    <div className="flex flex-col items-center w-full">
-      <div
-        className={`w-full rounded-xl flex items-center justify-center p-6 cursor-default transition-colors ${
-          isSignature ? "max-w-[320px]" : isLogo ? "max-w-[280px]" : "max-w-[220px]"
-        }`}
-        style={{ background: previewBg, border: previewBorder }}
-        onMouseEnter={replay}
-      >
+    <div className="brand-mark-preview">
+      <div className={boxClass} onMouseEnter={replay}>
         {isSymbol ? (
-          <AnimatedSymbolMark playToken={playToken} className="w-32 h-32" />
+          <AnimatedSymbolMark playToken={playToken} className="symbol-mark" />
         ) : isLogo ? (
-          <AnimatedLogoMark
-            playToken={playToken}
-            darkMode={darkBg}
-            className="max-w-[280px]"
-          />
+          <AnimatedLogoMark playToken={playToken} darkMode={darkBg} className="logo-mark" />
         ) : imageSrc ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             key={`${playToken}-${darkBg ? "dark" : "light"}`}
             src={imageSrc}
             alt="OEPL Signature"
-            className="brand-reveal-image object-contain w-full h-auto max-h-32"
+            className="brand-reveal-image signature-img"
           />
         ) : null}
       </div>
 
       {hasBgToggle && (
-        <div className="mt-3 flex gap-2">
+        <div className="brand-bg-toggle-container">
           <BgToggleButton active={!darkBg} onClick={() => setDarkBg(false)}>
             {b.previewBgLight}
           </BgToggleButton>

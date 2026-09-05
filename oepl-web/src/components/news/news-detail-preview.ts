@@ -1,3 +1,5 @@
+/** 뉴스 첨부파일 확장자 표시 헬퍼 */
+
 export function fileExtension(name: string): string {
   const dot = name.lastIndexOf(".");
   return dot >= 0 ? name.slice(dot + 1).toUpperCase() : "FILE";

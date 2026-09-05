@@ -1,0 +1,435 @@
+/* Members 페이지 — src/app/members/page.tsx */
+
+/* 섹션 배경이 흰색/회색으로 번갈아 나온다 */
+.members-section {
+  background: #ffffff;
+  border-bottom: 1px solid oklch(96.7% 0.003 264.542); /* gray-100 */
+}
+
+.members-section.is-alt {
+  background: #f9fafb;
+}
+
+.members-section.is-last {
+  border-bottom: 0;
+}
+
+/* ============================================================
+   PROFESSOR
+   ============================================================ */
+
+.professor-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  padding: 2rem;
+  border: 1px solid oklch(96.7% 0.003 264.542); /* gray-100 */
+  border-radius: var(--radius-lg);
+}
+
+.professor-card .photo-box {
+  display: flex;
+  width: 100%;
+  max-width: 220px;
+  margin-inline: auto;
+  aspect-ratio: 5 / 6;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid oklch(92.8% 0.006 264.531); /* gray-200 */
+  border-radius: 0.75rem;
+  background: oklch(96.7% 0.003 264.542);
+}
+
+.professor-card .professor-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.professor-card .affiliation {
+  margin-bottom: 0.25rem;
+  font-size: var(--text-xs);
+  color: #9ca3af;
+}
+
+.professor-card .name-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.75rem;
+  row-gap: 0.125rem;
+}
+
+.professor-card .name {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
+  color: #080d1e;
+}
+
+.professor-card .name-sub {
+  font-size: var(--text-base);
+  color: #9ca3af;
+}
+
+.professor-card .link-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.professor-card .link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--text-xs);
+  color: #6b7280;
+  transition: color 150ms;
+}
+
+.professor-card .link:hover {
+  color: var(--color-brand);
+}
+
+.professor-card .link-icon {
+  color: var(--color-brand);
+}
+
+/* --- 연혁 --- */
+
+.professor-card .career-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.professor-card .icon-box {
+  display: flex;
+  width: 1.75rem;
+  height: 1.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-brand) 10%, transparent);
+  color: var(--color-brand);
+}
+
+.professor-card .career-label {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #9ca3af;
+}
+
+.career-row {
+  display: flex;
+  align-items: flex-start;
+  padding-block: 0.75rem;
+  padding-left: 2.25rem;
+  border-bottom: 1px solid oklch(96.7% 0.003 264.542); /* gray-100 */
+}
+
+.career-row .career-inner {
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+}
+
+.career-row .period {
+  flex-shrink: 0;
+  width: 9rem;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-brand);
+}
+
+.career-row .desc {
+  font-size: var(--text-sm);
+  color: #6b7280;
+}
+
+/* ============================================================
+   MEMBER LIST — 박사후연구원 · 대학원생
+   ============================================================ */
+
+.member-list-container {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.researcher-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  padding: 0.625rem;
+  border: 1px solid oklch(96.7% 0.003 264.542); /* gray-100 */
+  border-radius: var(--radius-lg);
+  background: #ffffff;
+  transition: border-color 150ms;
+}
+
+.researcher-card:hover {
+  border-color: color-mix(in srgb, var(--color-brand) 40%, transparent);
+}
+
+.researcher-card .photo-box {
+  display: flex;
+  width: 100%;
+  flex-shrink: 0;
+  aspect-ratio: 5 / 6;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid oklch(92.8% 0.006 264.531); /* gray-200 */
+  border-radius: 0.75rem;
+  background: oklch(96.7% 0.003 264.542);
+}
+
+.researcher-card .member-body {
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.researcher-card .name-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.researcher-card .name {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-bold);
+  color: #080d1e;
+}
+
+.researcher-card .name-sub {
+  font-size: var(--text-xs);
+  color: #9ca3af;
+}
+
+.researcher-card .info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.375rem;
+  min-width: 0;
+  font-size: var(--text-2xs);
+  line-height: var(--leading-normal);
+  color: #6b7280;
+}
+
+.researcher-card .info-row.is-email {
+  line-height: var(--leading-tight);
+  color: #9ca3af;
+}
+
+.researcher-card .info-icon {
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.researcher-card .info-row:not(.is-email) .info-icon {
+  color: var(--color-brand);
+}
+
+.researcher-card .info-text {
+  min-width: 0;
+  word-break: break-word;
+}
+
+/* ============================================================
+   ALUMNI LIST — 졸업생
+   ============================================================ */
+
+.alumni-list-container {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.alumni-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid oklch(96.7% 0.003 264.542); /* gray-100 */
+  border-radius: 0.75rem;
+  background: #ffffff;
+  transition: border-color 150ms;
+}
+
+.alumni-card:hover {
+  border-color: color-mix(in srgb, var(--color-brand) 40%, transparent);
+}
+
+.alumni-card .alumni-body {
+  min-width: 0;
+}
+
+.alumni-card .name-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  margin-bottom: 0.125rem;
+}
+
+.alumni-card .name {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: #080d1e;
+}
+
+.alumni-card .name-sub {
+  font-size: var(--text-xs);
+  color: #9ca3af;
+}
+
+.alumni-card .graduation {
+  font-size: var(--text-2xs);
+  line-height: var(--leading-tight);
+  color: #6b7280;
+}
+
+/* ============================================================
+   공통 — 학위 배지, 사진 자리 표시
+   ============================================================ */
+
+.degree-tag {
+  width: fit-content;
+  padding: 0.125rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--color-brand) 20%, transparent);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-brand) 10%, transparent);
+  color: var(--color-brand);
+  font-size: var(--text-2xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.alumni-card .degree-tag {
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.member-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.member-photo-placeholder {
+  font-size: var(--text-2xs);
+  color: oklch(70.7% 0.022 261.325); /* gray-400 */
+}
+
+/* 이름이 길면 한 줄로 자른다 */
+.researcher-card .name,
+.researcher-card .name-sub,
+.alumni-card .name,
+.alumni-card .name-sub {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   BREAKPOINTS
+   ============================================================ */
+
+@media (min-width: 40rem) {
+  .member-list-container {
+    gap: 1.5rem;
+  }
+
+  .alumni-list-container {
+    gap: 1rem;
+  }
+
+  .professor-card .photo-box {
+    max-width: 260px;
+  }
+
+  .researcher-card {
+    flex-direction: row;
+    gap: 1rem;
+    padding: 0.75rem;
+  }
+
+  .researcher-card .photo-box {
+    width: 140px;
+    height: 168px;
+    aspect-ratio: auto;
+  }
+
+  .researcher-card .member-body {
+    justify-content: space-between;
+    padding-block: 0.75rem;
+  }
+
+  /* 이름 > 영문 이름 > 정보 줄 순으로 한 단계씩 작아진다 */
+  .researcher-card .name {
+    font-size: var(--text-base);
+  }
+
+  .researcher-card .name-sub {
+    font-size: var(--text-sm);
+  }
+
+  .researcher-card .info-row {
+    font-size: var(--text-xs);
+  }
+
+  .alumni-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+  }
+
+  .alumni-card .name-row {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .alumni-card .name {
+    font-size: var(--text-base);
+  }
+
+  .alumni-card .name-sub {
+    font-size: var(--text-sm);
+  }
+
+  .alumni-card .graduation {
+    font-size: var(--text-xs);
+  }
+
+  .career-row .career-inner {
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 48rem) {
+  .professor-card {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .professor-card .photo-box {
+    max-width: none;
+  }
+}
+
+@media (min-width: 64rem) {
+  .member-list-container,
+  .alumni-list-container {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

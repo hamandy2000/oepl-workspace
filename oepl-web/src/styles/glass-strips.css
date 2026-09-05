@@ -1,0 +1,48 @@
+/* 배너 유리 스트립 장식 — src/components/banner/BannerGlassStrips.tsx
+ * 히어로 배너와 서브페이지 배너가 함께 쓴다.
+ * 스트립 개수가 화면 크기에 따라 달라서 폭은 컴포넌트가 계산해 넣는다.
+ */
+
+.glass-strips {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  pointer-events: none;
+}
+
+/* 좁은 화면은 10개, 넓은 화면은 18개를 쓴다 */
+.glass-strips.is-desktop {
+  display: none;
+}
+
+.glass-strips .strip {
+  height: 100%;
+  flex-shrink: 0;
+  backdrop-filter: blur(90px);
+  background: linear-gradient(
+    -90deg,
+    rgba(255, 255, 255, 0.008) 20%,
+    rgba(40, 40, 40, 0.093) 75.758%,
+    rgba(255, 255, 255, 0.008) 123.64%
+  );
+}
+
+/* 서브페이지 배너는 마지막 정지점이 더 옅다 (Figma Frame 179) */
+.glass-strips.is-page .strip {
+  background: linear-gradient(
+    -90deg,
+    rgba(255, 255, 255, 0.008) 20%,
+    rgba(40, 40, 40, 0.093) 75.758%,
+    rgba(255, 255, 255, 0.002) 123.64%
+  );
+}
+
+@media (min-width: 48rem) {
+  .glass-strips.is-mobile {
+    display: none;
+  }
+
+  .glass-strips.is-desktop {
+    display: flex;
+  }
+}

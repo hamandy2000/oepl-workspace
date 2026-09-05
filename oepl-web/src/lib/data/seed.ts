@@ -1,3 +1,5 @@
+/** 초기 샘플 사이트 콘텐츠와 localStorage 키 */
+
 import type { GalleryCategory, Professor, SiteContent, NewsItem, GalleryItem, Publication } from "@/types/content";
 import { createSeedIdFactory } from "./ids";
 

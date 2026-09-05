@@ -1,0 +1,37 @@
+/* 배지 — 뉴스 목록·상세·홈 섹션에서 함께 사용
+ *   src/components/news/NewsNewBadge.tsx
+ *   src/components/news/NewsPinnedBadge.tsx
+ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-2xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.025em;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.badge.badge-new {
+  background: var(--color-amber-500);
+  text-transform: uppercase;
+}
+
+.badge.badge-notice {
+  background: #080d1e;
+}
+
+/* 뉴스 상세에서 제목과 세로 정렬을 맞출 때 */
+.badge.is-offset {
+  margin-top: 0.375rem;
+}
+
+@media (min-width: 48rem) {
+  .badge.is-offset {
+    margin-top: 0.5rem;
+  }
+}

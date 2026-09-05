@@ -1,5 +1,7 @@
 "use client";
 
+/** 관리자 인증 Context — 세션 확인·로그인·로그아웃 */
+
 import {
   createContext,
   useCallback,

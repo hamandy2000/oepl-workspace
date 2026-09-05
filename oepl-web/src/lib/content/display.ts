@@ -1,3 +1,5 @@
+/** 뉴스·날짜 표시 및 정렬 헬퍼 */
+
 import type { Lang } from "@/i18n/translations";
 import type { GalleryItem, NewsItem, Publication } from "@/types/content";
 

@@ -1,3 +1,5 @@
+/** 클라이언트 뉴스 사진·첨부 동기화 */
+
 import type { ContentPhoto, NewsFile, NewsItem } from "@/types/content";
 import {
   newsFileFromRow,

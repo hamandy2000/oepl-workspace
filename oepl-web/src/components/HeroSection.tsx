@@ -1,5 +1,7 @@
 "use client";
 
+/** 홈 히어로 섹션 — 마우스 추적 글로우와 워드마크 (스타일: src/styles/hero.css) */
+
 import { useRef, useEffect, useCallback } from "react";
 import { ArrowRight } from "lucide-react";
 import { useLang } from "@/contexts/LangContext";
@@ -7,9 +9,6 @@ import { useLang } from "@/contexts/LangContext";
 import BannerGlassStrips from "@/components/banner/BannerGlassStrips";
 
 const GLOW_LERP = 0.1;
-
-const HERO_INSET =
-  "mx-auto flex w-full max-w-7xl flex-1 items-center px-10 sm:px-12 md:px-16 lg:px-20 xl:px-24";
 
 /** Figma Ellipse 63 — 336×315 @ (857, 357) on 1440×900 */
 const FIGMA_GLOW = {
@@ -24,16 +23,6 @@ const FIGMA_GLOW_DEFAULT = {
   y: (357 + 315 / 2) / 900,
 } as const;
 
-function HeroGlow() {
-  return (
-    <div
-      data-hero-glow
-      className="hero-glow-ellipse pointer-events-none"
-      aria-hidden
-    />
-  );
-}
-
 type HeroCopyProps = {
   subtitle: string;
   title: string;
@@ -41,60 +30,24 @@ type HeroCopyProps = {
   btn2: string;
 };
 
-function HeroCopy({
-  subtitle,
-  title,
-  btn1,
-  btn2,
-}: HeroCopyProps) {
+function HeroCopy({ subtitle, title, btn1, btn2 }: HeroCopyProps) {
   return (
-    <div className="hero-copy w-full">
-      <p className="mb-3 text-base font-medium leading-normal text-white md:mb-4 md:text-lg">
-        {subtitle}
-      </p>
+    <div className="hero-copy-container">
+      <p className="subtitle">{subtitle}</p>
 
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/hero/oepl-wordmark.svg"
-        alt="OEPL"
-        className="mb-3 h-auto w-full max-w-[200px] sm:max-w-[240px] md:mb-4 md:max-w-[300px]"
-        draggable={false}
-      />
+      <img src="/hero/oepl-wordmark.svg" alt="OEPL" className="wordmark" draggable={false} />
 
-      <h1 className="mb-8 text-2xl font-bold uppercase tracking-wide text-white md:mb-10 md:text-3xl md:leading-snug">
-        {title}
-      </h1>
+      <h1 className="hero-title">{title}</h1>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <a
-          href="/about#research"
-          className="group inline-flex items-center rounded-full bg-white text-sm font-semibold text-[#0a0a0a] glow-box-orange transition-colors hover:bg-[#E88800] hover:text-white"
-          style={{
-            padding: "var(--spacing-300) var(--spacing-600)",
-            borderRadius: "var(--radius-pill)",
-          }}
-        >
+      <div className="hero-btn-container">
+        <a href="/about#research" className="fill-btn">
           {btn1}
-          <ArrowRight
-            size={14}
-            aria-hidden
-            className="size-0 shrink-0 overflow-hidden opacity-0 transition-all duration-200 group-hover:ml-2 group-hover:size-[14px] group-hover:opacity-100"
-          />
+          <ArrowRight size={14} aria-hidden className="arrow" />
         </a>
-        <a
-          href="/publication"
-          className="group inline-flex items-center rounded-full border border-white bg-transparent text-sm font-medium text-white transition-colors hover:bg-white hover:text-[#0a0a0a] hover:glow-box-orange active:border-[#E88800] active:bg-[#E88800] active:text-white"
-          style={{
-            padding: "var(--spacing-300) var(--spacing-600)",
-            borderRadius: "var(--radius-pill)",
-          }}
-        >
+        <a href="/publication" className="line-btn">
           {btn2}
-          <ArrowRight
-            size={14}
-            aria-hidden
-            className="size-0 shrink-0 overflow-hidden opacity-0 transition-all duration-200 group-hover:ml-2 group-hover:size-[14px] group-hover:opacity-100"
-          />
+          <ArrowRight size={14} aria-hidden className="arrow" />
         </a>
       </div>
     </div>
@@ -130,14 +83,8 @@ export default function HeroSection() {
     const section = sectionRef.current;
     if (!section) return;
 
-    section.style.setProperty(
-      "--hero-glow-x",
-      `${FIGMA_GLOW_DEFAULT.x * 100}%`,
-    );
-    section.style.setProperty(
-      "--hero-glow-y",
-      `${FIGMA_GLOW_DEFAULT.y * 100}%`,
-    );
+    section.style.setProperty("--hero-glow-x", `${FIGMA_GLOW_DEFAULT.x * 100}%`);
+    section.style.setProperty("--hero-glow-y", `${FIGMA_GLOW_DEFAULT.y * 100}%`);
 
     const syncGlowSize = () => {
       const sectionWidth = section.getBoundingClientRect().width;
@@ -173,23 +120,16 @@ export default function HeroSection() {
   };
 
   return (
-    <section
-      ref={sectionRef}
-      onPointerMove={handlePointerMove}
-      className="hero-section relative flex flex-col overflow-hidden bg-white pt-16"
-    >
-      <div
-        className="hero-section__gradient absolute inset-x-0 top-16 bottom-0 pointer-events-none"
-        aria-hidden
-      />
+    <section ref={sectionRef} onPointerMove={handlePointerMove} className="hero-section">
+      <div className="hero-gradient" aria-hidden />
 
-      <HeroGlow />
+      <div data-hero-glow className="hero-glow" aria-hidden />
 
-      <div className="absolute inset-x-0 top-16 bottom-0 z-[2] pointer-events-none">
+      <div className="glass-container">
         <BannerGlassStrips />
       </div>
 
-      <div className={`relative z-10 ${HERO_INSET}`}>
+      <div className="hero-wrapper">
         <HeroCopy
           subtitle={t.hero.subtitle}
           title={t.hero.title}

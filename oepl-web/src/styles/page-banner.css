@@ -1,0 +1,93 @@
+/* 서브페이지 상단 배너 — src/components/PageBanner.tsx
+ *
+ *   .page-banner              흰 배경 + 헤더 높이만큼 위 여백
+ *     .page-banner-wrapper    검은 밴드 (실제 배너 영역)
+ *       세부 요소             타원 장식, 유리 스트립, 제목
+ */
+
+.page-banner {
+  position: relative;
+  isolation: isolate;
+  background: #ffffff;
+  padding-top: 4rem; /* 고정 헤더 높이 */
+}
+
+.page-banner-wrapper {
+  position: relative;
+  display: flex;
+  height: 100px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #1a1a1a;
+}
+
+/* --- 타원 장식 (Figma 642:625 / 642:628) --- */
+
+.page-banner-wrapper .ellipse {
+  position: absolute;
+  z-index: 0;
+  transform: rotate(180deg);
+  pointer-events: none;
+}
+
+.page-banner-wrapper .ellipse.is-wide {
+  top: 53%;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 86.67%;
+}
+
+.page-banner-wrapper .ellipse.is-center {
+  top: 29%;
+  left: 50%;
+  width: 74.31%;
+  max-width: 1070px;
+  height: 114.07%;
+  transform: translateX(-50%) rotate(180deg);
+}
+
+.page-banner-wrapper .ellipse-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: fill;
+}
+
+/* --- 유리 스트립 --- */
+
+.page-banner-wrapper .glass-container {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* --- 제목 --- */
+
+.page-banner-wrapper .page-title {
+  position: relative;
+  z-index: 10;
+  padding-inline: 1.5rem;
+  text-align: center;
+  font-size: 28px;
+  font-weight: var(--font-weight-bold);
+  line-height: var(--leading-tight);
+  color: #ffffff;
+}
+
+@media (min-width: 40rem) {
+  .page-banner-wrapper {
+    height: 135px;
+  }
+}
+
+@media (min-width: 48rem) {
+  .page-banner-wrapper .page-title {
+    font-size: 48px;
+    line-height: 1.1;
+  }
+}

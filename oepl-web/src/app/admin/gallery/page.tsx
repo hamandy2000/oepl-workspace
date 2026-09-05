@@ -1,5 +1,7 @@
 "use client";
 
+/** 관리자 갤러리 관리 — 다중 사진 업로드 및 카테고리 편집 */
+
 import { useMemo, useState } from "react";
 import { useLang } from "@/contexts/LangContext";
 import { useContent } from "@/contexts/ContentContext";
@@ -82,6 +84,9 @@ export default function AdminGalleryPage() {
     void readContentPhotoPreview(file).then(setPhotoPreview);
   }
 
+  /** 저장 후 사진이 남는지 — photoPreview 는 파일 선택 직후 비동기로 채워지므로 pendingPhotoFile 도 함께 본다 */
+  const hasPhoto = !!pendingPhotoFile || !!photoPreview;
+
   function handlePhotoRemove() {
     setPendingPhotoFile(null);
     setPhotoPreview(null);
@@ -90,6 +95,10 @@ export default function AdminGalleryPage() {
 
   async function handleSubmit() {
     if (!draft) return;
+    if (!hasPhoto) {
+      alert("사진을 등록해야 저장할 수 있습니다.");
+      return;
+    }
     setSubmitting(true);
     try {
       const normalized: GalleryItem = {

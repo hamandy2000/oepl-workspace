@@ -1,3 +1,5 @@
+/** Supabase 행 ↔ 앱 도메인 타입 변환 */
+
 import type {
   AlumniMember,
   ContentPhoto,

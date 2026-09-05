@@ -1,3 +1,5 @@
+/** 레코드 ID 헬퍼 — 신규 ID 판별 및 로컬 ID 채번 */
+
 /** 새 레코드 — DB insert 시 자동 번호 부여 */
 export const NEW_ID = 0;
 

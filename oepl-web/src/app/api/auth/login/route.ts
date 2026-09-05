@@ -1,3 +1,5 @@
+/** 관리자 로그인 API — 자격 검증 후 세션 쿠키 발급 */
+
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import {
