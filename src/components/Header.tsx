@@ -1,14 +1,17 @@
 "use client";
 
+/** 공통 헤더 — 로고, 내비게이션, 언어 전환 (스타일: src/styles/header.css) */
+
 import { useState, useEffect } from "react";
 import { Menu, X, Globe } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useLang } from "@/contexts/LangContext";
 
 const navLinks = [
   { label: "Home",        href: "/" },
-  { label: "About",       href: "/about" },
+  { label: "Research",    href: "/about" },
   { label: "Members",     href: "/members" },
   { label: "Publication", href: "/publication" },
   { label: "News",        href: "/news" },
@@ -16,110 +19,208 @@ const navLinks = [
   { label: "Contact",     href: "/contact" },
 ];
 
+function isNavActive(pathname: string, href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function LogoContainer({
+  priority = false,
+  compact = false,
+  onLabLogoClick,
+}: {
+  priority?: boolean;
+  compact?: boolean;
+  onLabLogoClick?: () => void;
+}) {
+  return (
+    <div className={compact ? "logo-container is-compact" : "logo-container"}>
+      <a
+        href="https://www.ulsan.ac.kr/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="logo-link"
+        aria-label="University of Ulsan"
+      >
+        <Image
+          src="/ulsan-university-logo.png"
+          alt="University of Ulsan"
+          width={180}
+          height={48}
+          className="logo-img"
+          priority={priority}
+        />
+      </a>
+      <span className="logo-bar" aria-hidden />
+      <Link href="/" className="logo-link" onClick={onLabLogoClick}>
+        <Image
+          src="/oepl-logo.png"
+          alt="OEPL — Organic Electronic Physics Laboratory"
+          width={132}
+          height={44}
+          className="logo-img"
+          priority={priority}
+        />
+      </Link>
+    </div>
+  );
+}
+
+function LangSwitch({
+  lang,
+  onSelect,
+}: {
+  lang: string;
+  onSelect: (next: "KR" | "EN") => void;
+}) {
+  return (
+    <div className="lang" aria-label="Switch language">
+      <Globe size={16} strokeWidth={1.8} className="lang-icon" />
+      <button
+        type="button"
+        onClick={() => onSelect("KR")}
+        className={lang === "KR" ? "lang-btn is-active" : "lang-btn"}
+      >
+        KO
+      </button>
+      <span className="lang-bar">|</span>
+      <button
+        type="button"
+        onClick={() => onSelect("EN")}
+        className={lang === "EN" ? "lang-btn is-active" : "lang-btn"}
+      >
+        EN
+      </button>
+    </div>
+  );
+}
+
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
   const { lang, setLang, t } = useLang();
 
+  // --- 동작 정의 (마크업에는 이름만 남긴다) ---
+  const openMenu = () => setMobileOpen(true);
+  const closeMenu = () => setMobileOpen(false);
+
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", fn, { passive: true });
-    return () => window.removeEventListener("scroll", fn);
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white border-b border-gray-200 shadow-sm"
-          : "bg-white border-b border-gray-100"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-6 relative">
-        {/* Logo */}
-        <Link href="/" className="flex items-center flex-shrink-0">
-          <Image
-            src="/oepl-logo.png"
-            alt="OEPL — Organic Electronic Physics Laboratory"
-            width={120}
-            height={40}
-            className="h-7 w-auto object-contain"
-            priority
-          />
-        </Link>
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [mobileOpen]);
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-7 absolute left-1/2 -translate-x-1/2">
+  return (
+    <header className={scrolled ? "header is-scrolled" : "header"}>
+      <div className="header-wrapper">
+        <LogoContainer priority />
+
+        <nav className="header-nav-container">
           {navLinks.map((link) => (
-            <Link
-              key={link.label}
-              href={link.href}
-              className="text-[#6b7280] hover:text-[#080d1e] text-sm font-medium transition-colors relative group"
-            >
+            <Link key={link.label} href={link.href} className="nav-link">
               {link.label}
-              <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-[#E88800] group-hover:w-full transition-all duration-200" />
+              <span className="nav-line" />
             </Link>
           ))}
         </nav>
 
-        {/* Right controls */}
-        <div className="hidden md:flex items-center gap-3">
-          {/* Login */}
-          <a
-            href="#"
-            className="px-4 py-1.5 text-xs font-medium border border-gray-200 text-[#6b7280] rounded-full hover:border-[#E88800]/60 hover:text-[#080d1e] transition-all"
-          >
+        <div className="header-util-container">
+          <Link href="/login" className="btn-outline btn-sm">
             {t.header.login}
-          </a>
-
-          {/* Language switcher */}
-          <div className="flex items-center gap-1.5" aria-label="Switch language">
-            <Globe size={14} strokeWidth={1.8} className="text-[#6b7280]" />
-            <button
-              onClick={() => setLang("KR")}
-              className={`text-xs font-semibold transition-colors ${
-                lang === "KR" ? "text-[#E88800]" : "text-[#9ca3af] hover:text-[#080d1e]"
-              }`}
-            >
-              KO
-            </button>
-            <span className="text-[#d1d5db] text-xs">|</span>
-            <button
-              onClick={() => setLang("EN")}
-              className={`text-xs font-semibold transition-colors ${
-                lang === "EN" ? "text-[#E88800]" : "text-[#9ca3af] hover:text-[#080d1e]"
-              }`}
-            >
-              EN
-            </button>
-          </div>
+          </Link>
+          <LangSwitch lang={lang} onSelect={setLang} />
         </div>
 
-        {/* Mobile toggle */}
         <button
-          className="md:hidden text-[#6b7280] hover:text-[#080d1e]"
-          onClick={() => setMobileOpen(!mobileOpen)}
+          type="button"
+          className="header-menu-btn"
+          onClick={openMenu}
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-header"
+          aria-label="Open menu"
         >
-          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+          <Menu size={22} aria-hidden />
         </button>
       </div>
 
-      {/* Mobile drawer */}
+      {/* 모바일 헤더 — Figma 558:460 (dim + 우측 패널) */}
       {mobileOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-6 py-5 shadow-lg">
-          <nav className="flex flex-col gap-4">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className="text-[#6b7280] hover:text-[#E88800] text-sm font-medium transition-colors"
-                onClick={() => setMobileOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
+        <>
+          <button
+            type="button"
+            className="mobile-header-dim"
+            aria-label="Close menu overlay"
+            onClick={closeMenu}
+          />
+
+          <aside
+            id="mobile-header"
+            className="mobile-header"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile navigation"
+          >
+            <div className="mobile-header-wrapper">
+              <div className="mobile-header-head-container">
+                <LogoContainer compact onLabLogoClick={closeMenu} />
+                <button
+                  type="button"
+                  className="close-btn"
+                  onClick={closeMenu}
+                  aria-label="Close menu"
+                >
+                  <X size={22} aria-hidden />
+                </button>
+              </div>
+
+              <nav className="mobile-header-nav-container">
+                {navLinks.map((link) => {
+                  const active = isNavActive(pathname, link.href);
+                  return (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      className={active ? "nav-link is-active" : "nav-link"}
+                      onClick={closeMenu}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
+
+                <Link href="/login" className="btn-outline btn-block" onClick={closeMenu}>
+                  {t.header.login}
+                </Link>
+              </nav>
+
+              <div className="mobile-header-util-container">
+                <div className="divider" />
+                <LangSwitch lang={lang} onSelect={setLang} />
+                <div className="info">
+                  <p>Organic Electronic Physics Laboratory</p>
+                  <a href="mailto:sucho@ulsan.ac.kr" className="info-link">
+                    sucho@ulsan.ac.kr
+                  </a>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </>
       )}
     </header>
   );

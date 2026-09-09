@@ -1,30 +1,233 @@
 "use client";
+
+/** Contact 페이지 — 연락처 표시 및 클릭 복사 (스타일: src/styles/contact.css) */
+
+import { useState, type ElementType, type ReactNode } from "react";
 import Header from "@/components/Header";
-import FooterCTA from "@/components/FooterCTA";
+import Footer from "@/components/Footer";
 import { useLang } from "@/contexts/LangContext";
+import { MapPin, Phone, Mail, ArrowRight } from "lucide-react";
+import PageBanner from "@/components/PageBanner";
+
+function useCopySection() {
+  const [copied, setCopied] = useState(false);
+
+  function notifyCopied() {
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }
+
+  return { copied, notifyCopied };
+}
+
+function Copyable({
+  text,
+  children,
+  className = "",
+  onCopied,
+  as: Tag = "p",
+  ...props
+}: {
+  text: string;
+  children: ReactNode;
+  className?: string;
+  onCopied: () => void;
+  as?: ElementType;
+  href?: string;
+}) {
+  async function handleCopy(e: React.MouseEvent) {
+    e.preventDefault();
+    try {
+      await navigator.clipboard.writeText(text);
+      onCopied();
+    } catch {
+      // ignore clipboard errors
+    }
+  }
+
+  return (
+    <Tag {...props} onClick={handleCopy} className={`copyable ${className}`.trim()}>
+      {children}
+    </Tag>
+  );
+}
+
+function CopiedBadge({ show, label }: { show: boolean; label: string }) {
+  return (
+    <span aria-hidden={!show} className={show ? "copied-badge is-shown" : "copied-badge"}>
+      {label}
+    </span>
+  );
+}
 
 export default function ContactPage() {
-  const { t } = useLang();
+  const { lang, t } = useLang();
+  const c = t.contact;
+  const fullAddressEn = c.addressEn.replace("\n", " ");
+  const addressCopy = useCopySection();
+  const phoneCopy = useCopySection();
+  const emailCopy = useCopySection();
+
   return (
     <>
       <Header />
-      <main className="pt-16">
-        <section className="bg-white py-20 min-h-[60vh]">
-          <div className="max-w-7xl mx-auto px-6">
-            <p className="text-xs tracking-widest uppercase font-semibold mb-3" style={{ color: "#E88800" }}>
-              {t.contact.label}
-            </p>
-            <h1 className="text-3xl md:text-4xl font-bold text-[#080d1e] mb-4">{t.contact.title}</h1>
-            <div className="mt-8 space-y-3 text-[#6b7280] text-sm">
-              <p>(44610) 울산광역시 남구 대학로 93 울산대학교 자연과학대학 8호관 8-224호 / 8-228호</p>
-              <p>93 Daehak-ro, Nam-gu, Ulsan 44610, Korea — Bldg. 8, Rm. 8-224 / 8-228, Univ. of Ulsan</p>
-              <p>+82-52-220-2547 (office)</p>
-              <p>sucho@ulsan.ac.kr</p>
+      <main className="page-main">
+        <PageBanner title={c.banner} />
+
+        <section className="contact-section section-y">
+          <div className="contact-wrapper">
+            <div className="contact-head-container">
+              <h2 className="contact-title">{c.heading}</h2>
+              <p className="contact-desc">
+                {lang === "KR"
+                  ? "연구실 방문, 공동 연구, 학생 모집 등 궁금하신 사항이 있으시면 언제든지 연락해 주세요."
+                  : "We'd love to hear from you. Whether you have questions about research, collaboration, or joining our lab, our team is here to help."}
+              </p>
+            </div>
+
+            <div className="contact-info-container">
+              {/* 주소 */}
+              <div className="info-item is-address">
+                <div className="info-head">
+                  <div className="icon-box">
+                    <MapPin size={14} />
+                  </div>
+                  <span className="label-box">
+                    <p className="label">{c.addressLabel}</p>
+                    <CopiedBadge show={addressCopy.copied} label={c.copySuccess} />
+                  </span>
+                </div>
+                <Copyable
+                  as="p"
+                  text={lang === "KR" ? c.address : fullAddressEn}
+                  onCopied={addressCopy.notifyCopied}
+                  className="value"
+                >
+                  {lang === "KR" ? c.address : c.addressEn.split("\n")[0]}
+                </Copyable>
+                {lang === "KR" ? (
+                  <Copyable
+                    as="p"
+                    text={fullAddressEn}
+                    onCopied={addressCopy.notifyCopied}
+                    className="value-sub"
+                  >
+                    {c.addressEn.split("\n").map((line, i, arr) => (
+                      <span key={i}>
+                        {line}
+                        {i < arr.length - 1 && <br />}
+                      </span>
+                    ))}
+                  </Copyable>
+                ) : (
+                  <>
+                    {c.addressEn
+                      .split("\n")
+                      .slice(1)
+                      .map((line, i) => (
+                        <Copyable
+                          key={i}
+                          as="p"
+                          text={fullAddressEn}
+                          onCopied={addressCopy.notifyCopied}
+                          className="value"
+                        >
+                          {line}
+                        </Copyable>
+                      ))}
+                    <Copyable
+                      as="p"
+                      text={c.address}
+                      onCopied={addressCopy.notifyCopied}
+                      className="value-sub"
+                    >
+                      {c.address}
+                    </Copyable>
+                  </>
+                )}
+              </div>
+
+              {/* 전화 */}
+              <div className="info-item">
+                <div className="info-head">
+                  <div className="icon-box">
+                    <Phone size={14} />
+                  </div>
+                  <span className="label-box">
+                    <p className="label">{c.phoneLabel}</p>
+                    <CopiedBadge show={phoneCopy.copied} label={c.copySuccess} />
+                  </span>
+                </div>
+                <div className="value-list">
+                  <Copyable
+                    as="a"
+                    href="tel:+82522202547"
+                    text="+82-52-220-2547"
+                    onCopied={phoneCopy.notifyCopied}
+                    className="value-plain"
+                  >
+                    +82-52-220-2547 (office)
+                  </Copyable>
+                  <Copyable
+                    as="a"
+                    href="tel:+82522204610"
+                    text="+82-52-220-4610"
+                    onCopied={phoneCopy.notifyCopied}
+                    className="value-plain"
+                  >
+                    +82-52-220-4610 (lab)
+                  </Copyable>
+                </div>
+              </div>
+
+              {/* 이메일 */}
+              <div className="info-item">
+                <div className="info-head">
+                  <div className="icon-box">
+                    <Mail size={14} />
+                  </div>
+                  <span className="label-box">
+                    <p className="label">{c.emailLabel}</p>
+                    <CopiedBadge show={emailCopy.copied} label={c.copySuccess} />
+                  </span>
+                </div>
+                <Copyable
+                  as="a"
+                  href="mailto:sucho@ulsan.ac.kr"
+                  text="sucho@ulsan.ac.kr"
+                  onCopied={emailCopy.notifyCopied}
+                  className="value-plain"
+                >
+                  sucho@ulsan.ac.kr
+                </Copyable>
+              </div>
+            </div>
+
+            <div className="contact-map-container">
+              <iframe
+                title="OEPL Location"
+                src="https://maps.google.com/maps?q=울산대학교+자연과학대학&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                width="100%"
+                height="100%"
+                className="map"
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+              <a
+                href="https://maps.google.com/?q=울산대학교+자연과학대학"
+                target="_blank"
+                rel="noreferrer"
+                className="map-link"
+              >
+                {lang === "KR" ? "길찾기" : "Get Directions"}
+                <ArrowRight size={13} />
+              </a>
             </div>
           </div>
         </section>
       </main>
-      <FooterCTA />
+      <Footer />
     </>
   );
 }

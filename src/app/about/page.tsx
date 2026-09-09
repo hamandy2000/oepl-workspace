@@ -1,73 +1,93 @@
 "use client";
+
+/** About 페이지 — 연구 분야, 특허, 브랜드 아이덴티티 (스타일: src/styles/about.css) */
+
+import { useState } from "react";
 import Header from "@/components/Header";
-import FooterCTA from "@/components/FooterCTA";
+import Footer from "@/components/Footer";
+import ResearchAreaCard from "@/components/ResearchAreaCard";
 import { useLang } from "@/contexts/LangContext";
+import { useContent } from "@/contexts/ContentContext";
+import BrandIdentitySection from "@/components/BrandIdentitySection";
+import PageBanner from "@/components/PageBanner";
+import { formatPatentDate } from "@/lib/content/display";
+import { FileText } from "lucide-react";
 
 export default function AboutPage() {
-  const { t } = useLang();
+  const { lang, t } = useLang();
+  const { content } = useContent();
+  const [expandedTag, setExpandedTag] = useState<string | null>(null);
+
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-white">
-
-        {/* Banner */}
-        <section className="bg-[#080d1e] pt-16 flex items-center justify-center" style={{ minHeight: 200 }}>
-          <div className="text-center">
-            <p className="section-label mb-2">OEPL</p>
-            <h1 className="text-5xl font-bold leading-tight text-white">{t.about.banner}</h1>
-          </div>
-        </section>
-
-        {/* 인사말 */}
-        <section className="py-20 bg-white border-b border-gray-100">
-          <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
-            <div className="rounded-2xl aspect-[15/16] flex items-center justify-center bg-gray-100 border border-gray-200">
-              <span className="text-sm text-gray-400">{t.about.profPhoto}</span>
-            </div>
-            <div>
-              <p className="section-label mb-8">{t.about.greetingLabel}</p>
-              <h2 className="text-3xl md:text-4xl font-bold text-[#080d1e] mb-6 leading-snug">
-                {t.about.greetingTitle.split("\n").map((line, i, arr) => (
-                  <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
-                ))}
-              </h2>
-              <div className="space-y-4 text-sm leading-relaxed text-[#6b7280]">
-                {t.about.greetingPs.map((p, i) => <p key={i}>{p}</p>)}
-              </div>
-            </div>
-          </div>
-        </section>
+      <main className="page-main">
+        <PageBanner title={t.about.banner} />
 
         {/* 연구 분야 소개 */}
-        <section className="py-20 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="mb-12">
-              <p className="section-label mb-1">{t.about.researchLabel}</p>
-              <h2 className="text-3xl md:text-4xl font-bold text-[#080d1e]">{t.about.researchTitle}</h2>
+        <section id="research" className="about-research-section section-y">
+          <div className="section-wrapper">
+            <div className="page-head-container is-loose">
+              <p className="section-label">{t.about.researchLabel}</p>
+              <h2 className="section-title">{t.about.researchTitle}</h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {t.about.areas.map((area, i) => (
-                <div
-                  key={i}
-                  className="rounded-2xl bg-white border border-gray-100 overflow-hidden flex flex-col hover:border-[#E88800]/40 transition-colors card-hover"
-                >
-                  <div className="w-full bg-gray-100" style={{ height: 240 }} />
-                  <div className="p-6 flex flex-col gap-3">
-                    <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full w-fit bg-[#E88800]/10 text-[#E88800] border border-[#E88800]/20">
-                      {area.tag}
-                    </span>
-                    <h3 className="font-bold text-base text-[#080d1e]">{area.title}</h3>
-                    <p className="text-sm leading-relaxed text-[#6b7280]">{area.desc}</p>
-                  </div>
-                </div>
+            <div className="about-area-container">
+              {t.about.areas.map((area) => (
+                <ResearchAreaCard
+                  key={area.tag}
+                  area={area}
+                  expanded={expandedTag === area.tag}
+                  onToggle={() => setExpandedTag((prev) => (prev === area.tag ? null : area.tag))}
+                />
               ))}
             </div>
           </div>
         </section>
 
+        {/* 특허 소개 */}
+        <section id="patents" className="about-patent-section section-y">
+          <div className="section-wrapper">
+            <div className="page-head-container is-loose">
+              <p className="section-label">{t.about.patentLabel}</p>
+              <h2 className="section-title">{t.about.patentTitle}</h2>
+            </div>
+
+            <div className="about-patent-container">
+              {content.patents.map((patent) => {
+                const isRegistered = patent.status === "registered";
+                return (
+                  <article key={patent.id} className="patent-card">
+                    <div className={isRegistered ? "icon-box is-registered" : "icon-box"}>
+                      <FileText size={18} />
+                    </div>
+
+                    <div className="patent-body">
+                      <div className="meta-container">
+                        <span className={isRegistered ? "status is-registered" : "status"}>
+                          {isRegistered
+                            ? t.about.patentStatusRegistered
+                            : t.about.patentStatusPending}
+                        </span>
+                        <span className="number">{patent.number}</span>
+                        <span className="date">{formatPatentDate(patent.date)}</span>
+                      </div>
+
+                      <h3 className="patent-title">
+                        {lang === "KR" ? patent.title : patent.titleEn}
+                      </h3>
+                      <p className="inventors">{patent.inventors}</p>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <BrandIdentitySection />
       </main>
-      <FooterCTA />
+      <Footer />
     </>
   );
 }

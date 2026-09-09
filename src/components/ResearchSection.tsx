@@ -1,61 +1,141 @@
 "use client";
+
+/** 홈 연구 분야 섹션 — 대표 카드 + 컴팩트 카드 배치 (스타일: src/styles/research.css) */
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useLang } from "@/contexts/LangContext";
+import { researchAreaImage } from "@/lib/content/research-images";
 
-function ResearchCard({
-  item,
-  large,
-}: {
-  item: { tag: string; title: string; desc: string };
-  large: boolean;
-}) {
+type ResearchItem = { tag: string; title: string; desc: string };
+
+const RESEARCH_ORDER = ["OSCs", "PSCs", "OFETs", "Metal Ink", "ELA"] as const;
+
+function sortResearchItems(items: ResearchItem[]) {
+  return [...items].sort(
+    (a, b) =>
+      RESEARCH_ORDER.indexOf(a.tag as (typeof RESEARCH_ORDER)[number]) -
+      RESEARCH_ORDER.indexOf(b.tag as (typeof RESEARCH_ORDER)[number])
+  );
+}
+
+function ResearchCover({ tag, featured = false }: { tag: string; featured?: boolean }) {
+  const image = researchAreaImage(tag, featured);
+  return (
+    <div className="cover">
+      {image ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={image} alt="" className="cover-img" />
+      ) : null}
+    </div>
+  );
+}
+
+function CardBody({ item }: { item: ResearchItem }) {
+  return (
+    <div className="card-body">
+      <span className="tag">{item.tag}</span>
+      <h3 className="card-title">{item.title}</h3>
+      <p className="card-desc">{item.desc}</p>
+    </div>
+  );
+}
+
+function FeaturedCard({ item }: { item: ResearchItem }) {
+  return (
+    <div className="research-card card-hover">
+      <div className="overlay" aria-hidden />
+      <div className="cover-box">
+        <ResearchCover tag={item.tag} featured />
+      </div>
+      <CardBody item={item} />
+    </div>
+  );
+}
+
+function CompactCard({ item, onSelect }: { item: ResearchItem; onSelect?: () => void }) {
+  const interactive = onSelect != null;
+  const className = interactive
+    ? "research-card card-hover is-compact is-interactive"
+    : "research-card card-hover is-compact";
+
+  const content = (
+    <>
+      <div className="overlay" aria-hidden />
+      <ResearchCover tag={item.tag} />
+      <CardBody item={item} />
+    </>
+  );
+
+  if (!interactive) {
+    return <div className={className}>{content}</div>;
+  }
+
   return (
     <div
-      className={`card-hover relative overflow-hidden rounded-2xl border border-gray-200 bg-white group cursor-pointer ${large ? "h-full" : ""}`}
+      role="button"
+      tabIndex={0}
+      onClick={onSelect}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect();
+        }
+      }}
+      className={className}
     >
-      <div className="absolute inset-0 group-hover:bg-black/[0.025] transition-colors duration-300" />
-      <div className={`relative z-10 p-6 flex flex-col h-full ${large ? "justify-end min-h-[380px]" : "justify-end min-h-[180px]"}`}>
-        <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#E88800]/15 text-[#E88800] border border-[#E88800]/30 mb-3 w-fit">
-          {item.tag}
-        </span>
-        <h3 className="text-[#080d1e] font-bold text-base leading-snug whitespace-pre-line mb-2">
-          {item.title}
-        </h3>
-        <p className="text-[#6b7280] text-xs">{item.desc}</p>
-      </div>
+      {content}
     </div>
   );
 }
 
 export default function ResearchSection() {
-  const { t } = useLang();
-  const [main, ...subs] = t.research.items;
+  const { lang, t } = useLang();
+  const items = sortResearchItems(t.research.items);
+  const [featuredIndex, setFeaturedIndex] = useState(0);
+  const featured = items[featuredIndex] ?? items[0];
+
+  useEffect(() => {
+    setFeaturedIndex(0);
+  }, [lang]);
+
   return (
-    <section id="research" className="bg-[#f9fafb] py-12 border-t border-gray-100">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-end justify-between mb-10">
+    <section id="research" className="research-section section-y">
+      <div className="section-wrapper">
+        <div className="section-head-container is-bottom">
           <div>
-            <p className="section-label mb-3">{t.research.label}</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-[#080d1e]">
-              {t.research.title}
-            </h2>
+            <p className="section-label">{t.research.label}</p>
+            <h2 className="section-title">{t.research.title}</h2>
           </div>
-          <a
-            href="#"
-            className="hidden md:inline-flex items-center gap-1.5 text-sm font-medium hover:opacity-70 transition-opacity"
-            style={{ color: "#E88800" }}
-          >
+          <Link href="/about#research" className="more-link">
             {t.research.more}
             <ArrowRight size={15} />
-          </a>
+          </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <ResearchCard item={main} large />
-          <div className="grid grid-cols-2 gap-5">
-            {subs.map((item, i) => (
-              <ResearchCard key={i} item={item} large={false} />
-            ))}
+        <div className="research-list-container">
+          {items.map((item) => (
+            <CompactCard key={item.tag} item={item} />
+          ))}
+        </div>
+
+        <div className="more-link-container">
+          <Link href="/about#research" className="btn-more">
+            {t.research.more} <ArrowRight size={13} />
+          </Link>
+        </div>
+
+        <div className="research-grid-container">
+          <div className="featured-box">
+            <FeaturedCard key={featured.tag} item={featured} />
+          </div>
+          <div className="compact-box">
+            {items.map((item, index) =>
+              index === featuredIndex ? null : (
+                <CompactCard key={item.tag} item={item} onSelect={() => setFeaturedIndex(index)} />
+              )
+            )}
           </div>
         </div>
       </div>

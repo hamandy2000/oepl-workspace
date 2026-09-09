@@ -1,3 +1,5 @@
+/** 홈(메인) 페이지 — 히어로·소개·연구·뉴스·논문 섹션을 조합 */
+
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import IntroSection from "@/components/IntroSection";
@@ -5,13 +7,13 @@ import ResearchSection from "@/components/ResearchSection";
 import FocusSection from "@/components/FocusSection";
 import NewsSection from "@/components/NewsSection";
 import PublicationsSection from "@/components/PublicationsSection";
-import FooterCTA from "@/components/FooterCTA";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
     <>
       <Header />
-      <main>
+      <main className="home-main">
         {/* 01 – 히어로 배너 (Figma: banner-section) */}
         <HeroSection />
 
@@ -32,7 +34,7 @@ export default function Home() {
       </main>
 
       {/* 07 – Footer (Figma: footer-section) */}
-      <FooterCTA />
+      <Footer />
     </>
   );
 }

@@ -1,8 +1,38 @@
+/* 전역 스타일시트 — Tailwind 로드, 디자인 토큰(CSS 변수), 공통 유틸리티 클래스 */
+
+/* 컴포넌트별 CSS — 새 파일을 만들면 여기에 한 줄씩 추가한다.
+   반드시 @import "tailwindcss" 위에 둘 것. 아래에 두면 Tailwind가 자기 내용을
+   먼저 펼치면서 이 @import가 파일 최상단 규칙이 아니게 되어 조용히 무시된다. */
+@import "../styles/header.css";
+@import "../styles/footer.css";
+@import "../styles/page-banner.css";
+@import "../styles/glass-strips.css";
+@import "../styles/badge.css";
+@import "../styles/section.css";
+@import "../styles/button.css";
+@import "../styles/intro.css";
+@import "../styles/focus.css";
+@import "../styles/publication.css";
+@import "../styles/hero.css";
+@import "../styles/research.css";
+@import "../styles/news.css";
+@import "../styles/not-found.css";
+@import "../styles/login.css";
+@import "../styles/contact.css";
+@import "../styles/about.css";
+@import "../styles/brand.css";
+@import "../styles/members.css";
+@import "../styles/list.css";
+@import "../styles/gallery.css";
+@import "../styles/news-detail.css";
+
 @import "tailwindcss";
 
 /* ============================================================
    OEPL Design System — Design Tokens
-   Source of truth: src/styles/tokens.json
+   이 @theme 블록이 토큰의 유일한 source of truth 다.
+   값을 바꿀 때는 여기만 고치고, CSS/TSX 에서는 var(--*) 로만 참조한다.
+   (구 src/styles/tokens.json 은 손으로 미러링하다 어긋나 제거됨)
    ============================================================ */
 
 @theme inline {
@@ -10,22 +40,46 @@
   /* ----------------------------------------------------------
      FONT FAMILIES
   ---------------------------------------------------------- */
-  --font-sans:    "Pretendard", var(--font-noto-sans-kr), system-ui, sans-serif;
-  --font-sans-ko: var(--font-noto-sans-kr), "Noto Sans KR", sans-serif;
+  --font-sans:    var(--font-google-sans), var(--font-noto-sans-kr), system-ui, sans-serif;
+  --font-sans-ko: var(--font-noto-sans-kr), var(--font-google-sans), system-ui, sans-serif;
   --font-mono:    var(--font-ibm-plex-mono), "IBM Plex Mono", Menlo, monospace;
 
   /* ----------------------------------------------------------
      TYPE SCALE
+     Tailwind utilities use --text-* (text-sm, text-2xs, …).
+     --font-size-* aliases are for custom CSS (.section-label, etc.).
   ---------------------------------------------------------- */
-  --font-size-xs:   12px;
-  --font-size-sm:   13px;
-  --font-size-base: 16px;
-  --font-size-lg:   18px;
-  --font-size-xl:   20px;
-  --font-size-2xl:  24px;
-  --font-size-3xl:  36px;
-  --font-size-4xl:  48px;
-  --font-size-5xl:  64px;
+  --text-2xs: 11px;
+  --text-2xs--line-height: 1.45;
+  --text-xs: 12px;
+  --text-xs--line-height: 1.5;
+  --text-sm: 13px;
+  --text-sm--line-height: 1.5;
+  --text-base: 16px;
+  --text-base--line-height: 1.5;
+  --text-lg: 18px;
+  --text-lg--line-height: 1.4;
+  --text-xl: 20px;
+  --text-xl--line-height: 1.4;
+  --text-2xl: 24px;
+  --text-2xl--line-height: 1.3;
+  --text-3xl: 36px;
+  --text-3xl--line-height: 1.2;
+  --text-4xl: 48px;
+  --text-4xl--line-height: 1.15;
+  --text-5xl: 64px;
+  --text-5xl--line-height: 1.1;
+
+  --font-size-2xs:  var(--text-2xs);
+  --font-size-xs:   var(--text-xs);
+  --font-size-sm:   var(--text-sm);
+  --font-size-base: var(--text-base);
+  --font-size-lg:   var(--text-lg);
+  --font-size-xl:   var(--text-xl);
+  --font-size-2xl:  var(--text-2xl);
+  --font-size-3xl:  var(--text-3xl);
+  --font-size-4xl:  var(--text-4xl);
+  --font-size-5xl:  var(--text-5xl);
 
   /* ----------------------------------------------------------
      FONT WEIGHTS
@@ -45,6 +99,26 @@
   --leading-loose:   1.4;
   --leading-body:    1.5;
   --leading-body-px: 20px;
+
+  /* ----------------------------------------------------------
+     TEXT STYLES (합성 스펙 — Figma 텍스트 스타일 1:1 대응)
+     CSS 변수로는 묶어 표현할 수 없어 표로만 남긴다.
+     사용할 때는 아래 --text-* / --font-weight-* / --leading-* 를 조합한다.
+
+       H1  Title Hero    64px / 1.1  / Bold      sans
+       H2  Title Page    48px / 1.15 / Bold      sans
+       H3  Heading       36px / 1.2  / Bold      sans
+       H4  Subheading    24px / 1.3  / Regular   sans
+       H5  Subtitle      20px / 1.4  / Regular   sans
+       H6                18px / 1.4  / Medium    sans
+       H7  / Input       16px / 1.5  / Medium    sans
+       Body Base         16px / 20px / Regular   sans
+       Body Strong       16px / 20px / SemiBold  sans
+       Body Small        12px / 1.5  / Regular   sans
+       Body Small Strong 12px / 1.5  / SemiBold  sans
+       Input             16px / 1.4  / Regular   sans
+       Code              13px / 1.5  / Regular   mono
+  ---------------------------------------------------------- */
 
   /* ----------------------------------------------------------
      COLOR — PRIMITIVES
@@ -80,6 +154,7 @@
 
   /* Brand */
   --color-brand:       #E88800;   /* amber-500 */
+  --color-brand-tint:  #F9E1BF;
   --color-brand-hover: #CC7700;   /* amber-hover */
   --color-brand-dark:  #A86000;   /* amber-dark */
 
@@ -102,6 +177,7 @@
   --spacing-2400: 96px;
   --spacing-3200: 128px;
   --spacing-4000: 160px;
+  --section-padding-y: var(--spacing-1200);
 
   /* ----------------------------------------------------------
      BORDER RADIUS
@@ -131,33 +207,16 @@ body {
    UTILITY CLASSES — token 기반
    ============================================================ */
 
-/* Glow effects */
-.glow-orange {
-  text-shadow: 0 0 28px rgba(232, 136, 0, 0.55);
-}
-.glow-box-orange {
-  box-shadow:
-    0 0 28px rgba(232, 136, 0, 0.28),
-    0 0 60px rgba(232, 136, 0, 0.10);
-}
 
 /* Card hover */
 .card-hover {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(232, 136, 0, 0.30);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(232, 136, 0, 0.16);
 }
 
-/* Star background */
-.hero-stars {
-  background-image:
-    radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
-  background-size: 80px 80px, 40px 40px;
-  background-position: 0 0, 20px 20px;
-}
 
 /* Section label */
 .section-label {
@@ -168,32 +227,222 @@ body {
   font-weight: var(--font-weight-semibold);
 }
 
-/* More / CTA button — token 기반 */
-.btn-more {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-200);                /* 8px */
-  padding: var(--spacing-200) var(--spacing-600);  /* 8px 24px */
-  border-radius: var(--radius-pill);
-  border: 1px solid color-mix(in srgb, var(--color-brand) 50%, transparent);
-  color: var(--color-brand);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  background: transparent;
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
+/* Unified section vertical padding — token: section.paddingY / spacing-1200 (48px) */
+.section-y {
+  padding-block: var(--section-padding-y);
 }
-.btn-more:hover {
-  background: var(--color-brand);
-  border-color: var(--color-brand);
-  color: var(--color-neutral-0);
+
+.section-anchor {
+  scroll-margin-top: var(--spacing-1600);
 }
+
 
 /* Scrollbar hide utility */
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Admin table — thin horizontal scrollbar + wheel scroll target */
+.admin-table-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f9fafb;
+}
+.admin-table-scroll::-webkit-scrollbar {
+  height: 3px;
+}
+.admin-table-scroll::-webkit-scrollbar-track {
+  background: #f9fafb;
+}
+.admin-table-scroll::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 9999px;
+}
+.admin-table-scroll::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Admin modal — scrollbar inside white panel */
+.admin-modal-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-brand) #ffffff;
+}
+.admin-modal-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.admin-modal-scroll::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+.admin-modal-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-brand);
+  border-radius: 9999px;
+}
+.admin-modal-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-hover);
+}
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: var(--color-bg); }
 ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-brand); }
+
+/* Brand CI — draw / reveal animations */
+@keyframes brand-stroke-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes brand-stroke-draw-offset {
+  to {
+    stroke-dashoffset: var(--draw-end-offset, 0);
+  }
+}
+
+@keyframes brand-image-reveal {
+  from {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0.35;
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+@keyframes brand-logo-subtitle-reveal {
+  from {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0.35;
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+@keyframes brand-logo-reveal-circle {
+  from {
+    clip-path: circle(0% at var(--reveal-origin-x, 50%) var(--reveal-origin-y, 6%));
+  }
+  to {
+    clip-path: circle(160% at var(--reveal-origin-x, 50%) var(--reveal-origin-y, 50%));
+  }
+}
+
+@keyframes brand-logo-reveal-from-top {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes brand-logo-reveal-from-bottom {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes brand-logo-reveal-from-left {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.brand-draw-stroke {
+  animation: brand-stroke-draw var(--draw-duration, 1s) ease forwards;
+  animation-delay: var(--draw-delay, 0s);
+}
+
+.brand-draw-stroke-offset {
+  animation: brand-stroke-draw-offset var(--draw-duration, 1s) ease forwards;
+  animation-delay: var(--draw-delay, 0s);
+}
+
+.brand-reveal-image {
+  animation: brand-image-reveal 1.05s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.brand-logo-subtitle-visible {
+  animation: brand-logo-subtitle-reveal 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.brand-logo-subtitle-pending {
+  clip-path: inset(0 100% 0 0);
+}
+
+.brand-logo-reveal-circle {
+  clip-path: circle(0% at var(--reveal-origin-x, 50%) var(--reveal-origin-y, 6%));
+  animation: brand-logo-reveal-circle var(--reveal-duration, 0.44s) ease forwards;
+  animation-delay: var(--reveal-delay, 0s);
+}
+
+.brand-logo-reveal-from-top {
+  clip-path: inset(0 0 100% 0);
+  animation: brand-logo-reveal-from-top var(--reveal-duration, 0.44s) ease forwards;
+  animation-delay: var(--reveal-delay, 0s);
+}
+
+.brand-logo-reveal-from-bottom {
+  clip-path: inset(100% 0 0 0);
+  animation: brand-logo-reveal-from-bottom var(--reveal-duration, 0.44s) ease forwards;
+  animation-delay: var(--reveal-delay, 0s);
+}
+
+.brand-logo-reveal-from-left {
+  clip-path: inset(0 100% 0 0);
+  animation: brand-logo-reveal-from-left var(--reveal-duration, 0.44s) ease forwards;
+  animation-delay: var(--reveal-delay, 0s);
+}
+
+.brand-logo-letter-pending.brand-logo-reveal-circle {
+  clip-path: circle(0% at var(--reveal-origin-x, 50%) var(--reveal-origin-y, 6%));
+}
+
+.brand-logo-letter-pending.brand-logo-reveal-from-top {
+  clip-path: inset(0 0 100% 0);
+}
+
+.brand-logo-letter-pending.brand-logo-reveal-from-bottom {
+  clip-path: inset(100% 0 0 0);
+}
+
+.brand-logo-letter-pending.brand-logo-reveal-from-left {
+  clip-path: inset(0 100% 0 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-draw-stroke,
+  .brand-draw-stroke-offset {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .brand-reveal-image {
+    animation: none;
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+
+  .brand-logo-subtitle-visible,
+  .brand-logo-subtitle-pending {
+    animation: none;
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+
+  .brand-logo-reveal-circle,
+  .brand-logo-reveal-from-top,
+  .brand-logo-reveal-from-bottom,
+  .brand-logo-reveal-from-left {
+    animation: none;
+    clip-path: inset(0 0 0 0);
+  }
+}

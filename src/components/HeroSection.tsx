@@ -1,79 +1,141 @@
 "use client";
+
+/** 홈 히어로 섹션 — 마우스 추적 글로우와 워드마크 (스타일: src/styles/hero.css) */
+
+import { useRef, useEffect, useCallback } from "react";
 import { ArrowRight } from "lucide-react";
-import OPVDiagram from "./OPVDiagram";
 import { useLang } from "@/contexts/LangContext";
+
+import BannerGlassStrips from "@/components/banner/BannerGlassStrips";
+
+const GLOW_LERP = 0.1;
+
+/** Figma Ellipse 63 — 336×315 @ (857, 357) on 1440×900 */
+const FIGMA_GLOW = {
+  width: 336,
+  height: 315,
+  blur: 75,
+  minWidth: 240,
+} as const;
+
+const FIGMA_GLOW_DEFAULT = {
+  x: (857 + 336 / 2) / 1440,
+  y: (357 + 315 / 2) / 900,
+} as const;
+
+type HeroCopyProps = {
+  subtitle: string;
+  title: string;
+  btn1: string;
+  btn2: string;
+};
+
+function HeroCopy({ subtitle, title, btn1, btn2 }: HeroCopyProps) {
+  return (
+    <div className="hero-copy-container">
+      <p className="subtitle">{subtitle}</p>
+
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/hero/oepl-wordmark.svg" alt="OEPL" className="wordmark" draggable={false} />
+
+      <h1 className="hero-title">{title}</h1>
+
+      <div className="hero-btn-container">
+        <a href="/about#research" className="fill-btn">
+          {btn1}
+          <ArrowRight size={14} aria-hidden className="arrow" />
+        </a>
+        <a href="/publication" className="line-btn">
+          {btn2}
+          <ArrowRight size={14} aria-hidden className="arrow" />
+        </a>
+      </div>
+    </div>
+  );
+}
 
 export default function HeroSection() {
   const { t } = useLang();
+  const sectionRef = useRef<HTMLElement>(null);
+  const targetRef = useRef({ ...FIGMA_GLOW_DEFAULT });
+  const currentRef = useRef({ ...FIGMA_GLOW_DEFAULT });
+  const rafRef = useRef<number | undefined>(undefined);
+
+  const animate = useCallback(() => {
+    const section = sectionRef.current;
+    if (section) {
+      const cur = currentRef.current;
+      const tgt = targetRef.current;
+      cur.x += (tgt.x - cur.x) * GLOW_LERP;
+      cur.y += (tgt.y - cur.y) * GLOW_LERP;
+      section.querySelectorAll<HTMLElement>("[data-hero-glow]").forEach((el) => {
+        el.style.left = `${cur.x * 100}%`;
+        el.style.top = `${cur.y * 100}%`;
+      });
+      section.style.setProperty("--hero-glow-x", `${cur.x * 100}%`);
+      section.style.setProperty("--hero-glow-y", `${cur.y * 100}%`);
+    }
+    rafRef.current = requestAnimationFrame(animate);
+  }, []);
+
+  useEffect(() => {
+    rafRef.current = requestAnimationFrame(animate);
+    const section = sectionRef.current;
+    if (!section) return;
+
+    section.style.setProperty("--hero-glow-x", `${FIGMA_GLOW_DEFAULT.x * 100}%`);
+    section.style.setProperty("--hero-glow-y", `${FIGMA_GLOW_DEFAULT.y * 100}%`);
+
+    const syncGlowSize = () => {
+      const sectionWidth = section.getBoundingClientRect().width;
+      const scaled = FIGMA_GLOW.width * (sectionWidth / 1440);
+      const maxW = FIGMA_GLOW.width;
+      const glowW = Math.min(maxW, Math.max(FIGMA_GLOW.minWidth, scaled));
+      const glowH = glowW * (FIGMA_GLOW.height / FIGMA_GLOW.width);
+      section.style.setProperty("--hero-glow-w", `${glowW}px`);
+      section.style.setProperty("--hero-glow-h", `${glowH}px`);
+      section.style.setProperty("--hero-glow-rx", `${glowW / 2}px`);
+      section.style.setProperty("--hero-glow-ry", `${glowH / 2}px`);
+    };
+
+    syncGlowSize();
+    const observer = new ResizeObserver(syncGlowSize);
+    observer.observe(section);
+
+    return () => {
+      if (rafRef.current !== undefined) cancelAnimationFrame(rafRef.current);
+      observer.disconnect();
+    };
+  }, [animate]);
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    const rect = sectionRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    targetRef.current = {
+      x: Math.min(1, Math.max(0, x)),
+      y: Math.min(1, Math.max(0, y)),
+    };
+  };
+
   return (
-    <section className="relative min-h-screen flex flex-col overflow-hidden bg-[var(--color-bg)]">
-      {/* Background stars */}
-      <div className="absolute inset-0 hero-stars opacity-25 pointer-events-none" />
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 60% 80% at 65% 50%, rgba(36,36,36,0.6) 0%, transparent 70%)",
-        }}
-      />
-      {/* Brand ambient glow */}
-      <div
-        className="absolute pointer-events-none"
-        style={{
-          width: 600,
-          height: 400,
-          borderRadius: "50%",
-          background:
-            "radial-gradient(ellipse, rgba(232,136,0,0.06) 0%, transparent 70%)",
-          top: "30%",
-          left: "-10%",
-        }}
-      />
+    <section ref={sectionRef} onPointerMove={handlePointerMove} className="hero-section">
+      <div className="hero-gradient" aria-hidden />
 
-      {/* Main */}
-      <div className="relative flex-1 max-w-7xl mx-auto w-full px-6 flex flex-col md:flex-row items-center gap-8 pt-16 pb-16">
-        {/* Left */}
-        <div className="flex-1 flex flex-col justify-center">
-          <p className="section-label mb-5">{t.hero.subtitle}</p>
+      <div data-hero-glow className="hero-glow" aria-hidden />
 
-          <h1 className="text-5xl font-bold leading-tight text-[var(--color-text)]">
-            OEPL
-          </h1>
-          <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold leading-[1.1] mb-6 text-[var(--color-text)] whitespace-pre-line">
-            {t.hero.title}
-          </h1>
+      <div className="glass-container">
+        <BannerGlassStrips />
+      </div>
 
-          <p className="text-[var(--color-muted)] text-sm leading-relaxed mb-8 max-w-md">
-            {t.hero.desc}
-          </p>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <a
-              href="#research"
-              className="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand)] text-[var(--color-neutral-950)] font-semibold text-sm hover:bg-[var(--color-brand-hover)] transition-colors glow-box-orange"
-              style={{ padding: "var(--spacing-300) var(--spacing-600)" }}
-            >
-              {t.hero.btn1}
-              <ArrowRight size={15} />
-            </a>
-            <a
-              href="#publications"
-              className="inline-flex items-center gap-2 rounded-full border text-[var(--color-subtle)] font-medium text-sm transition-all hover:border-[var(--color-brand)] hover:text-[var(--color-text)]"
-              style={{
-                padding: "var(--spacing-300) var(--spacing-600)",
-                borderColor: "var(--color-border)",
-                borderRadius: "var(--radius-pill)",
-              }}
-            >
-              {t.hero.btn2}
-            </a>
-          </div>
-        </div>
-
-        {/* Right — OPV Diagram */}
-        <div className="flex-1 relative min-h-[340px] hidden md:block">
-          <OPVDiagram />
-        </div>
+      <div className="hero-wrapper">
+        <HeroCopy
+          subtitle={t.hero.subtitle}
+          title={t.hero.title}
+          btn1={t.hero.btn1}
+          btn2={t.hero.btn2}
+        />
       </div>
     </section>
   );
