@@ -26,7 +26,7 @@ const CATEGORY_CLASS: Record<GalleryCategory, string> = {
 
 export default function GalleryPage() {
   const { t } = useLang();
-  const { content } = useContent();
+  const { content, ready } = useContent();
   const photos = content.gallery;
   const [category, setCategory] = useState<Category>("전체");
   const [page, setPage] = useState(1);
@@ -97,7 +97,7 @@ export default function GalleryPage() {
 
             {paginated.length === 0 && (
               <div className="gallery-empty-container">
-                <p>{t.gallery.empty}</p>
+                <p>{ready ? t.gallery.empty : t.gallery.loading}</p>
               </div>
             )}
 

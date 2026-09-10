@@ -99,18 +99,21 @@ export interface Translations {
     msAlumniLabel: string; msAlumniTitle: string;
     photo: string;
     degreeMap: Record<string, string>;
+    loading: string;
   };
   publication: {
     banner: string; yearAll: string;
     count: (n: number) => string;
     sortNewest: string; sortOldest: string;
     noResults: string;
+    loading: string;
   };
   gallery: {
     banner: string;
     categoryLabels: Record<string, string>;
     count: (n: number) => string;
     empty: string;
+    loading: string;
   };
   contact: {
     label: string; banner: string; title: string; heading: string;
@@ -382,6 +385,7 @@ const KR: Translations = {
     msAlumniTitle: "졸업생 소개 · M.S 과정",
     photo: "사진",
     degreeMap: { "박사과정": "박사과정", "석사과정": "석사과정", "박사 후 연구원": "박사 후 연구원", "박사후연구원": "박사 후 연구원" },
+    loading: "불러오는 중…",
   },
   publication: {
     banner: "Publication",
@@ -390,12 +394,14 @@ const KR: Translations = {
     sortNewest: "최신순",
     sortOldest: "오래된순",
     noResults: "해당 조건의 논문이 없습니다.",
+    loading: "불러오는 중…",
   },
   gallery: {
     banner: "Gallery",
     categoryLabels: { "전체": "전체", "Member": "Member", "Conference": "Conference", "기타": "기타" },
     count: (n) => `${n}개 행사`,
     empty: "해당 카테고리의 행사가 없습니다.",
+    loading: "불러오는 중…",
   },
   contact: {
     label: "Contact Us", banner: "Contact", title: "연락처", heading: "Contact Us",
@@ -678,6 +684,7 @@ const EN: Translations = {
     msAlumniTitle: "Alumni · M.S Program",
     photo: "Photo",
     degreeMap: { "박사과정": "Ph.D Student", "석사과정": "M.S Student", "박사 후 연구원": "Postdoc", "박사후연구원": "Postdoc" },
+    loading: "Loading…",
   },
   publication: {
     banner: "Publication",
@@ -686,12 +693,14 @@ const EN: Translations = {
     sortNewest: "Latest",
     sortOldest: "Oldest",
     noResults: "No papers found.",
+    loading: "Loading…",
   },
   gallery: {
     banner: "Gallery",
     categoryLabels: { "전체": "All", "Member": "Member", "Conference": "Conference", "기타": "Other" },
     count: (n) => `${n} event${n !== 1 ? "s" : ""}`,
     empty: "No events in this category.",
+    loading: "Loading…",
   },
   contact: {
     label: "Contact Us", banner: "Contact", title: "Contact", heading: "Contact Us",

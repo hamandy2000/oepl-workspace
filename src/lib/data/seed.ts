@@ -148,6 +148,24 @@ export const seedContent: SiteContent = {
   })),
 } as SiteContent;
 
+/**
+ * 첫 렌더용 빈 상태. seedContent를 초기값으로 쓰면 DB 응답이 오기 전까지
+ * 예시 데이터가 실제 내용인 것처럼 노출된다. 시드는 Supabase 미설정이나
+ * 조회 실패 시의 폴백으로만 쓰고, 초기값은 비워 둔다.
+ */
+export const emptyContent: SiteContent = {
+  news: [],
+  publications: [],
+  gallery: [],
+  patents: [],
+  members: {
+    professor: seedContent.members.professor,
+    postdocs: [],
+    gradStudents: [],
+    phdAlumni: [],
+    msAlumni: [],
+  },
+};
 export const STORAGE_KEY = "oepl-site-content";
 export const PROFESSOR_STORAGE_KEY = "oepl-professor";
 

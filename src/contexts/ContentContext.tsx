@@ -21,7 +21,7 @@ import type {
 } from "@/types/content";
 import { NEW_ID, isNewId, nextLocalId } from "@/lib/data/ids";
 import { formatNewsPostDate, normalizePublication } from "@/lib/content/display";
-import { seedContent } from "@/lib/data/seed";
+import { emptyContent } from "@/lib/data/seed";
 import {
   applyMemberRecord,
   removeMemberFromGroups,
@@ -54,7 +54,7 @@ interface ContentContextValue {
 const ContentContext = createContext<ContentContextValue | null>(null);
 
 export function ContentProvider({ children }: { children: React.ReactNode }) {
-  const [content, setContent] = useState<SiteContent>(seedContent);
+  const [content, setContent] = useState<SiteContent>(emptyContent);
   const [ready, setReady] = useState(false);
   const [saving, setSaving] = useState(false);
 

@@ -91,7 +91,7 @@ function CareerRow({ period, desc }: { period: string; desc: string }) {
 
 export default function MembersPage() {
   const { lang, t } = useLang();
-  const { content } = useContent();
+  const { content, ready } = useContent();
   const m = t.members;
   const professor = content.members.professor;
   const { postdocs, gradStudents, phdAlumni, msAlumni } = groupMembersForDisplay(content.members);
@@ -165,9 +165,13 @@ export default function MembersPage() {
               <h2 className="section-title">{m.postdocTitle}</h2>
             </div>
             <div className="member-list-container">
-              {postdocs.map((r) => (
-                <ResearcherCard key={r.id} r={r} lang={lang} degreeMap={m.degreeMap} />
-              ))}
+              {!ready ? (
+                <p className="member-list-loading">{m.loading}</p>
+              ) : (
+                postdocs.map((r) => (
+                  <ResearcherCard key={r.id} r={r} lang={lang} degreeMap={m.degreeMap} />
+                ))
+              )}
             </div>
           </div>
         </section>
@@ -180,9 +184,13 @@ export default function MembersPage() {
               <h2 className="section-title">{m.gradTitle}</h2>
             </div>
             <div className="member-list-container">
-              {gradStudents.map((r) => (
-                <ResearcherCard key={r.id} r={r} lang={lang} degreeMap={m.degreeMap} />
-              ))}
+              {!ready ? (
+                <p className="member-list-loading">{m.loading}</p>
+              ) : (
+                gradStudents.map((r) => (
+                  <ResearcherCard key={r.id} r={r} lang={lang} degreeMap={m.degreeMap} />
+                ))
+              )}
             </div>
           </div>
         </section>
@@ -195,9 +203,13 @@ export default function MembersPage() {
               <h2 className="section-title">{m.phdAlumniTitle}</h2>
             </div>
             <div className="alumni-list-container">
-              {phdAlumni.map((a) => (
-                <AlumniCard key={a.id} a={a} lang={lang} degreeMap={m.degreeMap} />
-              ))}
+              {!ready ? (
+                <p className="member-list-loading">{m.loading}</p>
+              ) : (
+                phdAlumni.map((a) => (
+                  <AlumniCard key={a.id} a={a} lang={lang} degreeMap={m.degreeMap} />
+                ))
+              )}
             </div>
           </div>
         </section>
@@ -210,9 +222,13 @@ export default function MembersPage() {
               <h2 className="section-title">{m.msAlumniTitle}</h2>
             </div>
             <div className="alumni-list-container">
-              {msAlumni.map((a) => (
-                <AlumniCard key={a.id} a={a} lang={lang} degreeMap={m.degreeMap} />
-              ))}
+              {!ready ? (
+                <p className="member-list-loading">{m.loading}</p>
+              ) : (
+                msAlumni.map((a) => (
+                  <AlumniCard key={a.id} a={a} lang={lang} degreeMap={m.degreeMap} />
+                ))
+              )}
             </div>
           </div>
         </section>

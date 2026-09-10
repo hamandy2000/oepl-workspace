@@ -109,10 +109,10 @@
    LINKS — 메뉴 컬럼
    ============================================================ */
 
+/* 모바일에서는 헤더 햄버거 메뉴와 링크가 겹치므로 감춘다. 푸터에서 실제로
+   쓰이는 건 위의 연락처 블록이다. 48rem 이상에서 다시 보인다. */
 .footer-link-container {
-  display: flex;
-  flex: 1 1 0%;
-  justify-content: space-around;
+  display: none;
 }
 
 .footer-link-container .link-list {
@@ -168,6 +168,12 @@
   .footer-bottom .footer-wrapper {
     flex-direction: row;
     justify-content: space-between;
+  }
+
+  .footer-link-container {
+    display: flex;
+    flex: 1 1 0%;
+    justify-content: space-around;
   }
 
   .footer-bottom .copyright {

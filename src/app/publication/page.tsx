@@ -83,7 +83,7 @@ function SortDropdown({
 
 export default function PublicationPage() {
   const { lang, t } = useLang();
-  const { content } = useContent();
+  const { content, ready } = useContent();
   const publications = content.publications;
   const years = useMemo(() => {
     const uniqueYears = [
@@ -213,6 +213,12 @@ export default function PublicationPage() {
                 <PublicationCard key={pub.id} pub={pub} lang={lang} />
               ))}
             </div>
+
+            {paginated.length === 0 && (
+              <div className="publication-list-empty">
+                <p>{ready ? t.publication.noResults : t.publication.loading}</p>
+              </div>
+            )}
 
             {totalPages > 1 && (
               <div className="pagination-container">

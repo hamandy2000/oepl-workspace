@@ -19,7 +19,7 @@ const PER_PAGE = 10;
 
 export default function NewsPage() {
   const { lang, t } = useLang();
-  const { content } = useContent();
+  const { content, ready } = useContent();
   const [page, setPage] = useState(1);
   const [sortOrder, setSortOrder] = useState<SortOrder>("newest");
 
@@ -111,7 +111,7 @@ export default function NewsPage() {
 
             {paginated.length === 0 && (
               <div className="news-list-empty">
-                <p>{t.news.empty}</p>
+                <p>{ready ? t.news.empty : t.news.loading}</p>
               </div>
             )}
 
