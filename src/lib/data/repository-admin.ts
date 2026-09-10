@@ -23,7 +23,6 @@ import {
 } from "@/lib/data/mappers";
 import { removeNewsMediaWithClient } from "@/lib/data/media-sync-server";
 import { removeGalleryPhotoWithClient } from "@/lib/supabase/content-media-server";
-import { createServiceRoleClient } from "@/lib/supabase/admin-server";
 
 async function upsertEntity<T extends { id: number }>(
   client: SupabaseClient,
@@ -42,56 +41,55 @@ async function upsertEntity<T extends { id: number }>(
   return fromRow(data as Record<string, unknown>);
 }
 
-function adminClient() {
-  return createServiceRoleClient();
+// Every function here takes the caller's Supabase client rather than creating a
+// service role client of its own. That client carries the admin's identity, so RLS
+// (see supabase/admins.sql) re-checks each write at the database — route-level
+// authorization is no longer the only thing between a request and the data.
+
+export async function persistNewsAdmin(client: SupabaseClient, item: NewsItem): Promise<NewsItem> {
+  return upsertEntity(client, "news", item, newsToRow, newsFromRow);
 }
 
-export async function persistNewsAdmin(item: NewsItem): Promise<NewsItem> {
-  return upsertEntity(adminClient(), "news", item, newsToRow, newsFromRow);
-}
-
-export async function removeNewsAdmin(id: number): Promise<void> {
-  const client = adminClient();
+export async function removeNewsAdmin(client: SupabaseClient, id: number): Promise<void> {
   await removeNewsMediaWithClient(client, id);
   const { error } = await client.from("news").delete().eq("id", id);
   if (error) throw new Error(error.message);
 }
 
-export async function persistPublicationAdmin(item: Publication): Promise<Publication> {
-  return upsertEntity(adminClient(), "publications", item, publicationToRow, publicationFromRow);
+export async function persistPublicationAdmin(client: SupabaseClient, item: Publication): Promise<Publication> {
+  return upsertEntity(client, "publications", item, publicationToRow, publicationFromRow);
 }
 
-export async function removePublicationAdmin(id: number): Promise<void> {
-  const { error } = await adminClient().from("publications").delete().eq("id", id);
+export async function removePublicationAdmin(client: SupabaseClient, id: number): Promise<void> {
+  const { error } = await client.from("publications").delete().eq("id", id);
   if (error) throw new Error(error.message);
 }
 
-export async function persistGalleryAdmin(item: GalleryItem): Promise<GalleryItem> {
-  return upsertEntity(adminClient(), "gallery", item, galleryToRow, galleryFromRow);
+export async function persistGalleryAdmin(client: SupabaseClient, item: GalleryItem): Promise<GalleryItem> {
+  return upsertEntity(client, "gallery", item, galleryToRow, galleryFromRow);
 }
 
-export async function removeGalleryAdmin(id: number): Promise<void> {
-  const client = adminClient();
+export async function removeGalleryAdmin(client: SupabaseClient, id: number): Promise<void> {
   await removeGalleryPhotoWithClient(client, id);
   const { error } = await client.from("gallery").delete().eq("id", id);
   if (error) throw new Error(error.message);
 }
 
-export async function persistPatentAdmin(item: Patent): Promise<Patent> {
-  return upsertEntity(adminClient(), "patents", item, patentToRow, patentFromRow);
+export async function persistPatentAdmin(client: SupabaseClient, item: Patent): Promise<Patent> {
+  return upsertEntity(client, "patents", item, patentToRow, patentFromRow);
 }
 
-export async function removePatentAdmin(id: number): Promise<void> {
-  const { error } = await adminClient().from("patents").delete().eq("id", id);
+export async function removePatentAdmin(client: SupabaseClient, id: number): Promise<void> {
+  const { error } = await client.from("patents").delete().eq("id", id);
   if (error) throw new Error(error.message);
 }
 
-export async function persistMemberAdmin(item: MemberRecord): Promise<MemberRecord> {
-  return upsertEntity(adminClient(), "members", item, memberRecordToRow, memberRecordFromRow);
+export async function persistMemberAdmin(client: SupabaseClient, item: MemberRecord): Promise<MemberRecord> {
+  return upsertEntity(client, "members", item, memberRecordToRow, memberRecordFromRow);
 }
 
-export async function removeMemberAdmin(id: number): Promise<void> {
-  const { error } = await adminClient().from("members").delete().eq("id", id);
+export async function removeMemberAdmin(client: SupabaseClient, id: number): Promise<void> {
+  const { error } = await client.from("members").delete().eq("id", id);
   if (error) throw new Error(error.message);
 }
 
@@ -107,32 +105,36 @@ export type AdminContentAction =
   | "upsertMember"
   | "deleteMember";
 
-export async function runAdminContentAction(action: AdminContentAction, payload: unknown) {
+export async function runAdminContentAction(
+  client: SupabaseClient,
+  action: AdminContentAction,
+  payload: unknown,
+) {
   switch (action) {
     case "upsertNews":
-      return persistNewsAdmin(payload as NewsItem);
+      return persistNewsAdmin(client, payload as NewsItem);
     case "deleteNews":
-      await removeNewsAdmin(Number(payload));
+      await removeNewsAdmin(client, Number(payload));
       return { ok: true };
     case "upsertPublication":
-      return persistPublicationAdmin(payload as Publication);
+      return persistPublicationAdmin(client, payload as Publication);
     case "deletePublication":
-      await removePublicationAdmin(Number(payload));
+      await removePublicationAdmin(client, Number(payload));
       return { ok: true };
     case "upsertGallery":
-      return persistGalleryAdmin(payload as GalleryItem);
+      return persistGalleryAdmin(client, payload as GalleryItem);
     case "deleteGallery":
-      await removeGalleryAdmin(Number(payload));
+      await removeGalleryAdmin(client, Number(payload));
       return { ok: true };
     case "upsertPatent":
-      return persistPatentAdmin(payload as Patent);
+      return persistPatentAdmin(client, payload as Patent);
     case "deletePatent":
-      await removePatentAdmin(Number(payload));
+      await removePatentAdmin(client, Number(payload));
       return { ok: true };
     case "upsertMember":
-      return persistMemberAdmin(payload as MemberRecord);
+      return persistMemberAdmin(client, payload as MemberRecord);
     case "deleteMember":
-      await removeMemberAdmin(Number(payload));
+      await removeMemberAdmin(client, Number(payload));
       return { ok: true };
     default:
       throw new Error("Unknown action");

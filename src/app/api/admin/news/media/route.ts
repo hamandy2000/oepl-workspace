@@ -1,19 +1,15 @@
 /** 뉴스 미디어 동기화 API — 뉴스 사진·첨부파일을 서버에서 일괄 반영 */
 
 import { NextResponse } from "next/server";
-import { requireAdminSession } from "@/lib/auth/require-admin-api";
+import { requireAdmin } from "@/lib/auth/require-admin-api";
 import { syncNewsMediaWithClient } from "@/lib/data/media-sync-server";
 import type { NewsMediaDraft } from "@/lib/data/media-sync";
-import { createServiceRoleClient, isAdminServerConfigured } from "@/lib/supabase/admin-server";
 import { validateContentPhotoFile, validateNewsFile } from "@/lib/supabase/content-media";
 
 export async function POST(request: Request) {
-  const unauthorized = await requireAdminSession();
-  if (unauthorized) return unauthorized;
+  const guard = await requireAdmin();
+  if (!guard.ok) return guard.response;
 
-  if (!isAdminServerConfigured()) {
-    return NextResponse.json({ error: "Supabase admin is not configured" }, { status: 503 });
-  }
 
   try {
     const form = await request.formData();
@@ -54,7 +50,7 @@ export async function POST(request: Request) {
       }
     }
 
-    const client = createServiceRoleClient();
+    const client = guard.session.client;
     const result = await syncNewsMediaWithClient(client, newsId, draft);
     return NextResponse.json(result);
   } catch (err) {

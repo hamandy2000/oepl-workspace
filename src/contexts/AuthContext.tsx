@@ -14,8 +14,9 @@ import { ADMIN_IDLE_TIMEOUT_MS } from "@/lib/supabase/security";
 
 interface AuthContextValue {
   isAuthenticated: boolean;
+  email: string | null;
   loading: boolean;
-  login: (username: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
 }
 
@@ -23,19 +24,29 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [email, setEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // "Authenticated" here means "signed in AND an admin" — /api/auth/session reports
+  // admin status, not merely a valid session. Anything this flag gates is UI only;
+  // the API routes and RLS enforce the same rule server-side.
   const refreshSession = useCallback(async () => {
     try {
       const res = await fetch("/api/auth/session", { credentials: "include" });
       if (!res.ok) {
         setIsAuthenticated(false);
+        setEmail(null);
         return;
       }
-      const json = (await res.json()) as { authenticated?: boolean };
+      const json = (await res.json()) as {
+        authenticated?: boolean;
+        email?: string | null;
+      };
       setIsAuthenticated(Boolean(json.authenticated));
+      setEmail(json.email ?? null);
     } catch {
       setIsAuthenticated(false);
+      setEmail(null);
     }
   }, []);
 
@@ -46,6 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(async () => {
     await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
     setIsAuthenticated(false);
+    setEmail(null);
   }, []);
 
   useEffect(() => {
@@ -71,21 +83,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [isAuthenticated, logout]);
 
-  const login = useCallback(async (username: string, password: string) => {
+  const login = useCallback(async (loginEmail: string, password: string) => {
     const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ email: loginEmail, password }),
     });
     if (!res.ok) return false;
+    const json = (await res.json().catch(() => null)) as { email?: string | null } | null;
     setIsAuthenticated(true);
+    setEmail(json?.email ?? loginEmail);
     return true;
   }, []);
 
   const value = useMemo(
-    () => ({ isAuthenticated, loading, login, logout }),
-    [isAuthenticated, loading, login, logout]
+    () => ({ isAuthenticated, email, loading, login, logout }),
+    [isAuthenticated, email, loading, login, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

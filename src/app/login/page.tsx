@@ -23,7 +23,7 @@ function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextPath = safeNextPath(searchParams.get("next"));
-  const [id, setId] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -38,7 +38,7 @@ function LoginPageContent() {
     e.preventDefault();
     setError("");
     setSubmitting(true);
-    const ok = await login(id, password);
+    const ok = await login(email, password);
     setSubmitting(false);
     if (ok) {
       router.replace(nextPath);
@@ -68,16 +68,16 @@ function LoginPageContent() {
               {error && <p className="error">{error}</p>}
 
               <div className="field">
-                <label htmlFor="login-id" className="label">
-                  {l.idLabel}
+                <label htmlFor="login-email" className="label">
+                  {l.emailLabel}
                 </label>
                 <input
-                  id="login-id"
-                  type="text"
-                  value={id}
-                  onChange={(e) => setId(e.target.value)}
-                  placeholder={l.idPlaceholder}
-                  autoComplete="username"
+                  id="login-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={l.emailPlaceholder}
+                  autoComplete="email"
                   required
                   className="input"
                 />

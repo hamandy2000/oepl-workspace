@@ -9,9 +9,9 @@
     "lint": "eslint",
     "db:check": "node scripts/check-db.mjs",
     "db:probe": "node scripts/probe-schema.mjs",
-    "db:setup": "node scripts/setup-db.mjs",
+    "db:setup": "node scripts/run-sql.mjs",
     "db:seed": "tsx scripts/seed-db.ts",
-    "db:reset": "node scripts/setup-db.mjs && tsx scripts/seed-db.ts"
+    "db:reset": "node scripts/run-sql.mjs && tsx scripts/seed-db.ts"
   },
   "dependencies": {
     "@fontsource/pretendard": "^5.2.5",
