@@ -152,7 +152,22 @@ export interface Translations {
       news: string;
       gallery: string;
       patents: string;
+      account: string;
     };
+    account: string;
+    accountTitle: string;
+    accountDesc: string;
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+    changePassword: string;
+    passwordChanged: string;
+    errMismatch: string;
+    errTooShort: string;
+    errSameAsCurrent: string;
+    errWrongCurrent: string;
+    errTooMany: string;
+    errGeneric: string;
     add: string;
     edit: string;
     delete: string;
@@ -416,8 +431,8 @@ const KR: Translations = {
   },
   login: {
     banner: "Login",
-    heading: "연구실 관리자 로그인",
-    desc: "연구실 구성원 전용 페이지입니다.",
+    heading: "로그인",
+    desc: "연구실 관리자 전용 페이지입니다.",
     passwordLabel: "비밀번호",
     passwordPlaceholder: "비밀번호를 입력하세요",
     emailLabel: "이메일",
@@ -451,7 +466,22 @@ const KR: Translations = {
       news: "News",
       gallery: "Gallery",
       patents: "Patents",
+      account: "Account",
     },
+    account: "계정",
+    accountTitle: "비밀번호 변경",
+    accountDesc: "현재 비밀번호를 확인한 뒤 새 비밀번호로 바꿉니다.",
+    currentPassword: "현재 비밀번호",
+    newPassword: "새 비밀번호",
+    confirmPassword: "새 비밀번호 확인",
+    changePassword: "비밀번호 변경",
+    passwordChanged: "비밀번호가 변경되었습니다.",
+    errMismatch: "새 비밀번호가 서로 다릅니다.",
+    errTooShort: "새 비밀번호는 8자 이상이어야 합니다.",
+    errSameAsCurrent: "현재 비밀번호와 다른 값을 입력해 주세요.",
+    errWrongCurrent: "현재 비밀번호가 올바르지 않습니다.",
+    errTooMany: "시도가 너무 많습니다. 잠시 후 다시 시도해 주세요.",
+    errGeneric: "변경에 실패했습니다. 잠시 후 다시 시도해 주세요.",
     add: "추가",
     edit: "수정",
     delete: "삭제",
@@ -715,7 +745,7 @@ const EN: Translations = {
   },
   login: {
     banner: "Login",
-    heading: "Lab Admin Login",
+    heading: "Login",
     desc: "This page is for lab members only.",
     passwordLabel: "Password",
     passwordPlaceholder: "Enter your password",
@@ -750,7 +780,22 @@ const EN: Translations = {
       news: "News",
       gallery: "Gallery",
       patents: "Patents",
+      account: "Account",
     },
+    account: "Account",
+    accountTitle: "Change password",
+    accountDesc: "Confirm your current password, then set a new one.",
+    currentPassword: "Current password",
+    newPassword: "New password",
+    confirmPassword: "Confirm new password",
+    changePassword: "Change password",
+    passwordChanged: "Your password has been changed.",
+    errMismatch: "The new passwords do not match.",
+    errTooShort: "The new password must be at least 8 characters.",
+    errSameAsCurrent: "Choose a password different from the current one.",
+    errWrongCurrent: "That is not your current password.",
+    errTooMany: "Too many attempts. Try again in a moment.",
+    errGeneric: "Could not change the password. Try again in a moment.",
     add: "Add",
     edit: "Edit",
     delete: "Delete",

@@ -16,6 +16,7 @@ import {
   Globe,
   PanelLeftClose,
   PanelLeft,
+  KeyRound,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useContent } from "@/contexts/ContentContext";
@@ -29,6 +30,7 @@ const nav = [
   { href: "/admin/news", labelKey: "news" as const, icon: Newspaper },
   { href: "/admin/gallery", labelKey: "gallery" as const, icon: Images },
   { href: "/admin/patents", labelKey: "patents" as const, icon: FileText },
+  { href: "/admin/account", labelKey: "account" as const, icon: KeyRound },
 ];
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {

@@ -102,3 +102,20 @@ export async function adminRemoveProfessorPhoto(): Promise<void> {
   });
   if (!res.ok) throw new Error(await parseError(res));
 }
+
+export async function changeAdminPassword(
+  currentPassword: string,
+  newPassword: string
+): Promise<void> {
+  const res = await fetch("/api/auth/password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+  if (!res.ok) {
+    const err = new Error(await parseError(res)) as Error & { status?: number };
+    err.status = res.status;
+    throw err;
+  }
+}
