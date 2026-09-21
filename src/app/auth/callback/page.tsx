@@ -9,7 +9,6 @@
  */
 
 import { Suspense, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageBanner from "@/components/PageBanner";
@@ -18,7 +17,6 @@ import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 function AuthCallbackContent() {
   const { t } = useLang();
-  const router = useRouter();
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -50,16 +48,21 @@ function AuthCallbackContent() {
       if (cancelled) return;
       if (sessionError) return fail(sessionError.message);
 
-      // 주소창에서 토큰을 지운 뒤 비밀번호 설정 화면으로 보낸다.
-      window.history.replaceState(null, "", window.location.pathname);
-      router.replace("/admin/account");
+      /*
+       * router.replace가 아니라 전체 페이지 이동이어야 한다. 클라이언트 내부 이동은
+       * AuthProvider를 다시 마운트하지 않는데, 그 컨텍스트는 이 페이지가 열릴 때
+       * — 세션이 생기기 전에 — 확인한 "로그인 안 됨"을 그대로 들고 있다. 그 상태로
+       * /admin에 들어가면 로그인 화면으로 튕기고, 로그인 화면은 자기가 보기에
+       * 미로그인이라 머문다. 전체 이동은 새 쿠키로 서버 렌더부터 다시 시작한다.
+       */
+      window.location.replace("/admin/account");
     }
 
     void exchange();
     return () => {
       cancelled = true;
     };
-  }, [router, t.login.error]);
+  }, [t.login.error]);
 
   return (
     <>
